@@ -91,7 +91,6 @@ namespace MappingSubdist.Controllers
         #endregion
 
 
-
         [Route("subdist")]
         public ActionResult Subdist(SubdistModel subdistModel)
         {
