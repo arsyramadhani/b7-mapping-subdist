@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/Content/assets/images/favicon.ico">
+    <!-- App css -->
+
+    <link href="~/Content/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/assets/css/icons.css" rel="stylesheet" />
+    <link href="~/Content/assets/css/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Content/assets/css/style.css" rel="stylesheet" />
+    <script src="~/Content/assets/js/modernizr.min.js"></script>
+    <link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/plugins/sweet-alert/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/Content/select2.min.css" rel="stylesheet" />
+    <!-- jQuery  -->
+    <script src="~/Content/assets/js/jquery.min.js" type="text/javascript"></script>
+    <script src="~/Content/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/assets/js/metisMenu.min.js"></script>
+    <script src="~/Content/assets/js/waves.js"></script>
+    <script src="~/Content/assets/js/jquery.slimscroll.js"></script>
+    <script src="~/Scripts/jquery.dataTables.min.js"></script>
+    <script src="~/Content/plugins/sweet-alert/sweetalert2.min.js"></script>
+</head>
+<body>
+    <div id="wrapper"> 
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="left side-menu">
+            <div class="slimscroll-menu" id="remove-scroll">
+                <!-- LOGO -->
+                <div class="topbar-left">
+                    <a href="index.html" class="logo">
+                        <span>
+                            <img src="~/Content/assets/images/logo_light.png" height="22" />
+                        </span>
+                        <i>
+                            <img src="~/Content/assets/images/logo_sm.png" height="28" />
+                        </i>
+                    </a>
+                </div>
+
+                <!-- User box -->
+                <div class="user-box">
+                    <div class="user-img">
+                        <img src="~/Content/assets/images/users/avatar-1.jpg" alt="user-img" title="Mat Helme" class="rounded-circle img-fluid" />
+                    </div>
+                    <h5><a href="#">Maxine Kennedy</a> </h5>
+                    <p class="text-muted">Admin Head</p>
+                </div>
+
+                <!--- Sidemenu -->
+                <div id="sidebar-menu"> 
+                    <ul class="metismenu" id="side-menu">
+
+                        <!--<li class="menu-title">Navigation</li>-->
+
+                        <!--<li id="liFINARMenu">
+                            <a href="javascript: void(0);"><i class="fi-layers"></i> <span>FINAR</span> <span class="menu-arrow"></span></a>
+                            <ul class="nav-second-level" aria-expanded="false">
+                                <li><a href="CreateClaim">Create Claim</a></li>
+                            </ul>
+                        </li>
+
+                        <li id="liMSSDMenu">
+                            <a href="javascript: void(0);"><i class="fi-paper"></i> <span> MSSD </span> <span class="menu-arrow"></span></a>
+                            <ul class="nav-second-level" aria-expanded="false">
+                                <li><a href="CreatePA">Create Payment Approval</a></li>-->
+                                @*<li><a href="">Closed No Claim</a></li>*@
+                            <!--</ul>
+                        </li>
+
+                        <li id="liMKTMenu">
+                            <a href="javascript: void(0);"><i class="fi-paper-stack"></i><span> Marketing </span> <span class="menu-arrow"></span></a>
+                            <ul class="nav-second-level" aria-expanded="false">-->
+                                @*<li><a href="page-starter.html">Create SPB Claim</a></li>*@
+                                <!--<li><a href="CreateMemo">Create Memo</a></li>
+                            </ul>
+                        </li>-->
+
+                        <li>
+                            <a href="javascript: void(0);"><i class="fi-bar-graph-2"></i><span> Subdist </span> <span class="menu-arrow"></span></a>
+                            <ul class="nav-second-level" aria-expanded="false">
+                                <li><a href="createuser">Create User</a></li>
+                                <li><a href="mappingemail">Mapping Email</a></li>
+                                <li><a href="mappinguser">Mapping User</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- Sidebar -->
+
+                <div class="clearfix"></div>
+
+            </div>
+            <!-- Sidebar -left -->
+
+        </div>
+        <!-- Left Sidebar End -->
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+
+        <div class="content-page">
+
+            <!-- Top Bar Start -->
+            <div class="topbar">
+
+
+
+            </div>
+            <!-- Top Bar End -->
+            <!-- Start Page content -->
+            <div class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card-box">
+                                @*<h4 class="header-title mb-4">Header</h4>*@
+
+                                @RenderBody()
+                            </div>
+                        </div>
+                    </div>
+
+                </div> <!-- container -->
+
+            </div> <!-- content -->
+
+            <footer class="footer">
+                2018 - 2019 © Highdmin. <span class="d-none d-sm-inline-block"> - Coderthemes.com</span>
+            </footer>
+
+        </div>
+
+
+        <!-- ============================================================== -->
+        <!-- End Right content here -->
+        <!-- ============================================================== -->
+
+    </div>
+
+
+
+
+    <!-- KNOB JS -->
+    <!--[if IE]>
+    <script src="../plugins/jquery-knob/excanvas.js"></script>
+    <![endif]-->
+    <script src="~/Content/plugins/jquery-knob/jquery.knob.js"></script>
+
+
+    <!-- App js -->
+    <script src="~/Content/assets/js/jquery.core.js"></script>
+    <script src="~/Content/assets/js/jquery.app.js"></script>
+    <script>
+        @*var IsLogin = '@Request.RequestContext.HttpContext.Session["Role"]';
+        $(document).ready(function () {
+            if (IsLogin == 'MKT') {
+                $("#liFINARMenu").prop("hidden", true);
+                $("#liMSSDMenu").prop("hidden", true);
+                $("#liMKTMenu").prop("hidden", false);
+            } else if (IsLogin == 'FA') {
+                $("#liFINARMenu").prop("hidden", true);
+                $("#liMSSDMenu").prop("hidden", false);
+                $("#liMKTMenu").prop("hidden", true);
+            } else if (IsLogin == 'FINAR') {
+                $("#liFINARMenu").prop("hidden", false);
+                $("#liMSSDMenu").prop("hidden", true);
+                $("#liMKTMenu").prop("hidden", true);
+            }
+        });*@
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,411 @@
+﻿
+@{
+    ViewBag.Title = "Mapping User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .bd-example-modal-lg .modal-dialog {
+        display: table;
+        position: relative;
+        margin: 0 auto;
+        top: calc(50% - 24px);
+    }
+</style>
+
+<div class="container">
+    <div class="col-md-12">
+        <h3><b>@ViewBag.Title</b></h3>
+        <hr />
+    </div>
+    <div class="col-md-12">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Username</label>
+            <div class="col-sm-4">
+                <select class="form-control" id="sel_user">
+                </select>
+            </div>
+        </div>
+        <hr />
+        <button class="btn btn-success waves-effect waves-light" id="btnAdd" data-toggle='modal' data-target='#myModal' hidden>Tambah Data</button>
+    </div>
+    <div class="col-md-12">
+        <br />
+        <table id="tblSubdist" class="table table-striped table-bordered zero-configuration" style="width:100%;">
+            <thead>
+                <tr>
+                    <th width="5%">No</th>
+                    <th width="10%">Username</th>
+                    <th width="10%">Kode Subdist</th>
+                    <th width="25%">Nama Subdist</th>
+                    <th width="10%">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+@*Modal*@
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Edit Mapping User Subdist</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" action="#">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="username">Username</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="username" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="sel_region">Region</label>
+                        <div class="col-sm-8">
+                            <select id="sel_region">
+                                <option value="0" disabled selected>Pilih Region</option>
+                                <option value="R1">REGION 1</option>
+                                <option value="R2">REGION 2</option>
+                                <option value="R3">REGION 3</option>
+                                <option value="R4">REGION 4</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="sel_cabang">Cabang</label>
+                        <div class="col-sm-8">
+                            <select id="sel_cabang">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="sel_subdist">Subdist</label>
+                        <div class="col-sm-8">
+                            <select id="sel_subdist">
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light waves-effect" data-dismiss="modal" id="btnClose">Tutup</button>
+                <button type="button" class="btn btn-primary waves-effect waves-light" id="btnSubmit">Simpan</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="~/Scripts/sweetalert2.all.min.js"></script>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/select2.min.js"></script>
+<script src="~/Scripts/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        @*Init*@
+        $('#sel_user').select2();
+         $('#sel_region').select2({
+            minimumResultsForSearch: Infinity
+         });
+        $('#sel_cabang').select2({
+            minimumResultsForSearch: Infinity,
+            placeholder: "Pilih Cabang"
+        });
+        $('#sel_subdist').select2({
+             placeholder: "Pilih Subdist"
+        }); 
+
+        getUser()
+
+        $('#sel_user').on('select2:select', function (e) {
+            let data = e.params.data.id; 
+            data === '-1' ? $('#btnAdd').attr('hidden', 'hidden') : $('#btnAdd').attr('hidden', null) && $('#username').val(data);
+             
+            getSubdistByUser(data)
+        });
+
+        $('#sel_region').on('select2:select', function (e) {
+            let data = e.params.data.id;
+            data != 0 && getCabangByRegion(data) 
+
+        });
+        $('#sel_cabang').on('select2:select', function (e) {
+            let data = e.params.data.id;
+            console.log(data)
+            getSubdistByCabang(data)
+        });
+
+        $('#btnSubmit').on('click', function () {
+            let DTO = {
+                username: $('#username').val(),
+                region: $('#sel_region').val(),
+                cabang: $('#sel_cabang').val(),
+                subdist: $('#sel_subdist').val()
+            }
+
+            if (validateModal(DTO)) {
+                $.ajax({
+                    type: "POST",
+                    url: "subdist",
+                    data: JSON.stringify({
+                        Option: "POST_MAPPING_USER",
+                        KodeSubdist: DTO.subdist,
+                        Username: DTO.username
+                    }),
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (res) {
+                        let result = JSON.parse(res)[0].RESULT 
+                        if (result === 'true') {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: 'Data berhasil disimpan',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }) 
+                            $('#btnClose').trigger('click');
+                        } else {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'error',
+                                title: 'Gagal menyimpan data',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+
+                    }
+                });
+            }
+        });
+
+        $('#btnAdd').on('click', function () {
+            modalValue('set', $('#sel_user').val())
+        });
+
+        $('#btnClose').on('click', function () { 
+            modalValue('clear')  
+        });
+
+    });
+
+    const getUser = () => {
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_USER"
+            }),
+
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                console.log(res)
+                $('#sel_user').empty()
+                result = ''
+                JSON.parse(res).forEach(item => {
+                    result += `<option value="${item.USERNAME}">${item.USERNAME}</option>`
+                })
+                $('#sel_user').append('<option value="-1" selected>Pilih User</option>')
+                $('#sel_user').append(result)
+            }
+        });
+    }
+
+    const getSubdistByUser = (username) => {
+        var table = $('#tblSubdist').DataTable();
+        table.destroy();
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_SUBDIST_BY_USERNAME",
+                Username: username
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                console.log(JSON.parse(res))
+                $("#tblSubdist").DataTable({
+                    "data": JSON.parse(res),
+                    "lengthChange": true,
+                    "searching": false,
+                    "columns": [
+                        { "data": "row_num" },
+                        { "data": "username" },
+                        { "data": "kodesubdist" },
+                        { "data": "NamaSubDist" },
+                        {
+                            "data": null,
+                            "defaultContent": "<button class='form-control-sm delete' type='button' name='delete' id='btnDelete'>Edit</button>"
+                        },
+                    ]
+                })
+            }
+        });
+
+        $('#tblSubdist tbody').on('click', 'button', function () {
+            let data = $(this).closest('tr').find('td')
+            let kodeSubdist = data[2].innerText
+            let username = data[1].innerText
+
+            deleteMapping(kodeSubdist, username)
+        });
+    }
+
+    const deleteMapping = (kodeSubdist, username) => {
+        Swal.fire({
+            title: 'Anda yakin akan menghapus mapping subdist ini?',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Simpan',
+            denyButtonText: `Tutup`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "subdist",
+                    data: JSON.stringify({
+                        Option: "POST_MAPPING_USER",
+                        KodeSubdist: kodeSubdist,
+                        Username: username
+                    }),
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (res) {
+                        let result = JSON.parse(res)[0].RESULT
+
+                        if (result === 'true') {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: 'Data berhasil disimpan',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+
+                            getSubdistByUser(username)
+
+                        } else {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'error',
+                                title: 'Gagal menyimpan data',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+
+                    }
+                });
+            } else if (result.isDenied) {
+                Swal.fire('Changes are not saved', '', 'info')
+            }
+        })
+    }
+
+    const getCabangByRegion = (kodeRegion) => {
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_CABANG",
+                Region: kodeRegion
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+
+                console.log(JSON.parse(res))
+                $('#sel_cabang').empty()
+                result = ''
+                JSON.parse(res).forEach(item => {
+                    result += `<option value="${item.cabang}">${item.namacabang}</option>`
+                })
+                $('#sel_cabang').append('<option value="0" disabled selected>Pilih Cabang</option>')
+                $('#sel_cabang').append(result)
+
+                $('#sel_subdist').empty()
+            }
+        });
+    }
+
+    const getSubdistByCabang = (kodeCabang) => {
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_SUBDIST",
+                KodeCabang: kodeCabang
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                console.log(JSON.parse(res))
+                $('#sel_subdist').empty()
+                result = ''
+                JSON.parse(res).forEach(item => {
+                    result += `<option value="${item.Kodesubdist}">${item.Kodesubdist} | ${item.NamaSubdist}</option>`
+                })
+                $('#sel_subdist').append('<option value="0" selected disabled >Pilih Subdist</option>')
+                $('#sel_subdist').append(result)
+            }
+        });
+    }
+
+    const validateModal = (item) => {
+        let res = true;   
+
+        if (item.region === null) {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Silahkan pilih cabang',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            res = false
+            return res
+        } 
+        if (item.cabang === null) {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Silahkan pilih cabang',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            res = false
+            return res
+        } 
+        if (item.subdist === null) {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Silahkan pilih subdist',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            res = false
+            return res
+        }
+        return res
+    }
+
+    const modalValue = (type, item) => {
+        if (type === 'clear') {
+            $('#username').val(null);
+            $('#sel_region').val(null).trigger('change');
+            $('#sel_cabang').empty().change()
+            $('#sel_subdist').empty().change() 
+        }
+        if (type === 'set') { 
+            $('#sel_region').val('0').trigger('change');
+            $('#username').val(item); 
+        }
+    }
+
+</script>
