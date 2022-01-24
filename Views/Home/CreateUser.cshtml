@@ -1,0 +1,180 @@
+﻿
+@{
+    ViewBag.Title = "Create User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .bd-example-modal-lg .modal-dialog {
+        display: table;
+        position: relative;
+        margin: 0 auto;
+        top: calc(50% - 24px);
+    }
+</style>
+
+<div class="container">
+    <div class="col-md-12">
+        <h3><b>@ViewBag.Title</b></h3>
+        <hr />
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <form id="form_username" action="#">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Username</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="username" class="form-control" placeholder="Enter Username">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-4">
+                            <input type="email" id="email" class="form-control" placeholder="Enter Email">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Password</label>
+                        <div class="col-sm-4">
+                            <input type="password" id="password" class="form-control" placeholder="Enter password">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            <button class="btn btn-primary btn-md " id="btnSubmit" style="background-color:darkcyan;color:white;">Save</button>
+                            <button class="btn btn-primary btn-md " id="btnReset" style="background-color:dimgrey;color:white;">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> 
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script> 
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $('#btnSubmit').on('click', function () {
+                let DTO = {
+                    Username: $('#username').val(),
+                    Email: $('#email').val(),
+                    Password: $('#password').val()
+                }
+                if (validateForm(DTO)) {
+                    $.ajax({
+                        type: "POST",
+                        url: "subdist",
+                        data: JSON.stringify({
+                            Option: "GET_USER",
+                            Username: DTO.Username
+                        }),
+                        dataType: "json",
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (res) {
+                            let result = JSON.parse(res)
+                            if (result.length === 0) {
+                                @*kosong*@
+                                submitForm(DTO.Username)
+                            } else {
+                                @*ada*@
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'error',
+                                    title: 'Username sudah ada',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }
+                        }
+                    })
+                }
+            });
+
+                        $('#btnReset').on('click', function () {
+                modalValue('clear')
+            });
+        });
+
+        const submitForm = (item) => {
+            $.ajax({
+                type: "POST",
+                url: "subdist",
+                data: JSON.stringify({
+                    Option: "POST_USER",
+                    Username: item.Username
+                }),
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                success: function (res) {
+                    let result = JSON.parse(res) 
+                    if (result[0].RESULT === 'true') {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Data berhasil disimpan',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    modalValue('clear')
+                    } else {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: 'Username sudah ada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }
+            })
+        }
+
+        const validateForm = (item) => {
+            let res = true;
+
+            if (item.Username.trim() === '') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Username tidak boleh kosong',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                res = false
+                return res
+            }
+            if (item.Email.trim() === '') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Email tidak boleh kosong',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                res = false
+                return res
+            }
+            if (item.Password.trim() === '') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Password tidak boleh kosong',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                res = false
+                return res
+            }
+            return res
+        }
+
+        const modalValue = (type) => {
+            if (type === 'clear') {
+                 $('#username').val(null),
+                     $('#email').val(null),
+                     $('#password').val(null)
+            }
+        }
+</script>

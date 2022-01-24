@@ -1,0 +1,257 @@
+﻿
+@{
+    ViewBag.Title = "Mapping Email Subdist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .bd-example-modal-lg .modal-dialog {
+        display: table;
+        position: relative;
+        margin: 0 auto;
+        top: calc(50% - 24px);
+    }
+</style>
+
+<div class="container">
+    <div class="col-md-12">
+        <h3><b>@ViewBag.Title</b></h3>
+        <hr /> 
+    </div>
+    <div class="col-md-12">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Pilih Regional</label>
+            <div class="col-sm-4">
+                <select id="sel_region">
+                    <option>Pilih Region</option>
+                    <option value="R1">REGION 1</option>
+                    <option value="R2">REGION 2</option>
+                    <option value="R3">REGION 3</option>
+                    <option value="R4">REGION 4</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Pilih Cabang</label>
+            <div class="col-sm-4">
+                <select id="sel_cabang">
+                </select>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="col-md-12">
+        <table id="tblSubdist" class="table table-striped table-bordered zero-configuration" style="width:100%;">
+            <thead>
+                <tr>
+                    <th width="5%">No</th>
+                    <th width="10%">Kode Subdist</th>
+                    <th width="25%">Nama Subdist</th>
+                    <th width="10%">Group Subdist</th>
+                    <th width="10%">Email</th>
+                    <th width="10%">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+@*Modal*@
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Edit Email Subdist</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" action="#"> 
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="kodeSubdist">Kode</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="kodeSubdist" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="kodeNamaSubdist">Nama</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="kodeNamaSubdist" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="emailBefore">Email</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="emailBefore" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="emailAfter">Email Baru</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="emailAfter" class="form-control">
+                        </div>
+                    </div>
+                </form>
+              </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light waves-effect" data-dismiss="modal" id="btnClose">Tutup</button>
+                <button type="button" class="btn btn-primary waves-effect waves-light" id="btnSubmit">Simpan</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/sweetalert2.all.min.js"></script>
+<script src="~/Scripts/select2.min.js"></script>
+<script src="~/Scripts/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {  
+        $('#sel_region').select2({
+            minimumResultsForSearch: Infinity
+        });
+        $('#sel_cabang').select2({
+            minimumResultsForSearch: Infinity,
+            placeholder: "Pilih Cabang"
+        }); 
+          
+        $('#sel_region').on('select2:select', function (e) { 
+            var data = e.params.data.id; 
+            getCabangByRegion(data)
+        });
+        $('#sel_cabang').on('select2:select', function (e) {
+            var data = e.params.data.id;
+            getSubdistByCabang(data)
+        });
+
+        $('#btnSubmit').on('click', function () {
+            let kodeSubdist = $('#kodeSubdist').val();
+            let email = $('#emailAfter').val();
+            kodeSubdist && submitModal(kodeSubdist, email) 
+        }); 
+        $('#btnClose').on('click', function () {
+            modalValue('clear')
+        }); 
+    }); 
+
+    const getCabangByRegion = (kodeRegion) => {
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_CABANG",
+                Region: kodeRegion
+            }), 
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) { 
+                $('#sel_cabang').empty()
+                result = '' 
+                JSON.parse(res).forEach(item => {
+                    result += `<option value="${item.cabang}">${item.namacabang}</option>`
+                })
+                $('#sel_cabang').append('<option></option>')
+                $('#sel_cabang').append(result)
+            }
+        });
+    }
+
+    const getSubdistByCabang = (kodeCabang) => { 
+
+        var table = $('#tblSubdist').DataTable();
+        table.destroy();
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_SUBDIST",
+                KodeCabang: kodeCabang
+            }), 
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) { 
+
+                $("#tblSubdist").DataTable({
+                    "data": JSON.parse(res),
+                    "lengthChange": true,
+                    "searching": false,
+                    "columns": [ 
+                        { "data": "row_num" },
+                        { "data": "Kodesubdist" },
+                        { "data": "NamaSubdist" },
+                        { "data": "GROUPSUBDIST" },
+                        { "data": "AlamatEmail" }, 
+                        {
+                            "data": null,
+                            "defaultContent": "<button class='form-control-sm delete' type='button' name='delete' data-toggle='modal' data-target='#myModal'>Edit</button>"
+                        },
+                    ]
+                })
+            }
+        });
+
+        $('#tblSubdist tbody').on('click', 'button', function () {
+            let data = $(this).closest('tr').find('td')
+            let item = {
+                kodeSubdist: data[1].innerText,
+                namaSubdist: data[2].innerText,
+                email: data[4].innerText
+            }
+            modalValue('set', item)
+        });  
+    }
+
+    const submitModal = (kodeSubdist, email) => {
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "UPDATE_SUBDIST_EMAIL",
+                KodeSubdist: kodeSubdist,
+                Email: email
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                let result = JSON.parse(res)[0].RESULT
+
+                if (result === 'true') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Data berhasil disimpan',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    $('#btnClose').trigger('click');
+                    modalValue('clear')
+                    getSubdistByCabang($('#sel_cabang').val())
+
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Gagal menyimpan data',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+
+            }
+        });
+    }
+
+    const modalValue = (type, item) => {
+        if (type === 'clear') {
+            $('#kodeSubdist').val(null);
+            $('#kodeNamaSubdist').val(null);
+            $('#emailBefore').val(null);
+            $('#emailAfter').val(null);
+        }
+        if (type === 'set') {
+            $('#kodeSubdist').val(item.kodeSubdist);
+            $('#kodeNamaSubdist').val(item.namaSubdist);
+            $('#emailBefore').val(item.email);
+            $('#emailAfter').val(item.email);
+        }
+    }
+
+</script>
