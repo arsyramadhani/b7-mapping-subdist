@@ -30,7 +30,7 @@
     <script src="~/Scripts/jquery.dataTables.min.js"></script>
     <script src="~/Content/plugins/sweet-alert/sweetalert2.min.js"></script>
 </head>
-<body class="account-pages"> 
+<body class="account-pages">
     <!-- Begin page -->
     <div class="accountbg" style="background: url('assets/images/bg-1.jpg');background-size: cover;background-position: center;"></div>
 
@@ -44,33 +44,29 @@
                     <div class="card-box p-5">
                         <h2 class="text-uppercase text-center pb-4">
                             <a href="/" class="text-success">
-                                @*<span><img src="assets/images/logo.png" alt="" height="26"></span>*@
+                                <span><img src="~/Content/Image/LogoB7.png" alt="" height="96px"></span>
                             </a>
-                        </h2>
-
-                        
-
-                            <div class="form-group m-b-20 row">
-                                <div class="col-12">
-                                    <label for="username">Username</label>
-                                    <input class="form-control" type="text" id="username"   placeholder="Enter your email">
-                                </div>
+                        </h2>  <div class="form-group m-b-20 row">
+                            <div class="col-12">
+                                <label for="username">Username</label>
+                                <input class="form-control" type="text" id="username" placeholder="Enter your email">
                             </div>
+                        </div>
 
-                            <div class="form-group row">
-                                <div class="col-12">
-                                    <label for="password">Password</label>
-                                    <input class="form-control" type="password"   id="password" placeholder="Enter your password">
-                                </div>
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <label for="password">Password</label>
+                                <input class="form-control" type="password" id="password" placeholder="Enter your password">
                             </div>
+                        </div>
 
 
-                            <div class="form-group row text-center">
-                                <div class="col-12">
-                                    <button class="btn btn-block btn-custom waves-effect waves-light" id="btnSubmit" type="submit">Sign In</button>
-                                </div>
+                        <div class="form-group row text-center">
+                            <div class="col-12">
+                                <button class="btn btn-block btn-custom waves-effect waves-light" id="btnSubmit" type="submit">Sign In</button>
                             </div>
-                         
+                        </div>
+
 
                     </div>
                 </div>
@@ -96,7 +92,7 @@
                     data: JSON.stringify({
                         Username: $('#username').val(),
                         Password: $('#password').val()
-                    }), 
+                    }),
                     dataType: "json",
                     contentType: 'application/json; charset=utf-8',
                     success: function (res) {

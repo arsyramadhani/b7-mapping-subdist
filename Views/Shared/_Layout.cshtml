@@ -26,73 +26,65 @@
     <script src="~/Content/plugins/sweet-alert/sweetalert2.min.js"></script>
 </head>
 <body>
-    <div id="wrapper"> 
+    <div id="wrapper">
         <!-- ========== Left Sidebar Start ========== -->
         <div class="left side-menu">
-            <div class="slimscroll-menu" id="remove-scroll">
+            <div class="slimscroll-menu" id="remove-scroll" style="height: 100vh">
                 <!-- LOGO -->
-                <div class="topbar-left">
-                    <a href="index.html" class="logo">
+                <div style="height: 48px"></div>
+                <div class="topbar-left" style="margin-top: 24px">
+                    <a href="/" class="logo">
                         <span>
-                            <img src="~/Content/assets/images/logo_light.png" height="22" />
+                            <img src="~/Content/Image/LogoB7.png" width="80%" />
                         </span>
                         <i>
-                            <img src="~/Content/assets/images/logo_sm.png" height="28" />
+                            <img src="~/Content/Image/LogoB7.png" height="28" />
                         </i>
                     </a>
                 </div>
-
                 <!-- User box -->
                 <div class="user-box">
-                    <div class="user-img">
-                        <img src="~/Content/assets/images/users/avatar-1.jpg" alt="user-img" title="Mat Helme" class="rounded-circle img-fluid" />
-                    </div>
-                    <h5><a href="#">Maxine Kennedy</a> </h5>
-                    <p class="text-muted">Admin Head</p>
+                    @*<h4 style="margin-bottom: 48px; margin-top: -24px">Mapping Subdist & User</h4>*@
+                    <p class="text-muted" style="margin-bottom: -8px">Welcome</p>
+                    <h5><a href="/">@Request.RequestContext.HttpContext.Session["USERNAME"]</a> </h5>
+                    @*<p class="text-muted">Admin Head</p>*@
                 </div>
 
                 <!--- Sidemenu -->
-                <div id="sidebar-menu"> 
+                <div id="sidebar-menu">
                     <ul class="metismenu" id="side-menu">
 
-                        <!--<li class="menu-title">Navigation</li>-->
-
-                        <!--<li id="liFINARMenu">
-                            <a href="javascript: void(0);"><i class="fi-layers"></i> <span>FINAR</span> <span class="menu-arrow"></span></a>
-                            <ul class="nav-second-level" aria-expanded="false">
-                                <li><a href="CreateClaim">Create Claim</a></li>
-                            </ul>
-                        </li>
-
-                        <li id="liMSSDMenu">
-                            <a href="javascript: void(0);"><i class="fi-paper"></i> <span> MSSD </span> <span class="menu-arrow"></span></a>
-                            <ul class="nav-second-level" aria-expanded="false">
-                                <li><a href="CreatePA">Create Payment Approval</a></li>-->
-                                @*<li><a href="">Closed No Claim</a></li>*@
-                            <!--</ul>
-                        </li>
-
-                        <li id="liMKTMenu">
-                            <a href="javascript: void(0);"><i class="fi-paper-stack"></i><span> Marketing </span> <span class="menu-arrow"></span></a>
-                            <ul class="nav-second-level" aria-expanded="false">-->
-                                @*<li><a href="page-starter.html">Create SPB Claim</a></li>*@
-                                <!--<li><a href="CreateMemo">Create Memo</a></li>
-                            </ul>
-                        </li>-->
+                        <li class="menu-title">Menu</li>
 
                         <li>
-                            <a href="javascript: void(0);"><i class="fi-bar-graph-2"></i><span> Subdist </span> <span class="menu-arrow"></span></a>
-                            <ul class="nav-second-level" aria-expanded="false">
-                                <li><a href="createuser">Create User</a></li>
-                                <li><a href="mappingemail">Mapping Email</a></li>
-                                <li><a href="mappinguser">Mapping User</a></li>
-                            </ul>
+                            <a href="/createuser">
+                                <i class="dripicons-user"></i><span> Create User </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/mappingemail">
+                                <i class="dripicons-mail"></i><span> Mapping Email </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/mappinguser">
+                                <i class="dripicons-user-id"></i><span> mappinguser </span>
+                            </a>
                         </li>
                     </ul>
 
                 </div>
                 <!-- Sidebar -->
+                <div id="sidebar-menu" style="bottom: 0px; position: fixed">
+                    <ul class="metismenu" id="side-menu">
+                        <li>
+                            <a id="btnLogout">
+                                <i class="dripicons-exit"></i><span> Logout </span>
+                            </a>
+                        </li>
+                    </ul>
 
+                </div>
                 <div class="clearfix"></div>
 
             </div>
@@ -157,7 +149,35 @@
     <script src="~/Content/assets/js/jquery.core.js"></script>
     <script src="~/Content/assets/js/jquery.app.js"></script>
     <script>
-        @*var IsLogin = '@Request.RequestContext.HttpContext.Session["Role"]';
+                $(document).ready(function () {  
+                    $("#sidebar-menu a").each(function () {
+                        var pageUrl = window.location.href.split(/[?#]/)[0];
+                        @*var pageUrl = window.location.href.substring(window.location.origin.length + 1)*@
+                        if (this.href == pageUrl) {
+                            $(this).addClass("mm-active");
+                            $(this).parent().addClass("mm-active"); // add active to li of the current link
+                            $(this).parent().parent().addClass("mm-show");
+                            $(this).parent().parent().prev().addClass("mm-active"); // add active class to an anchor
+                            $(this).parent().parent().parent().addClass("mm-active");
+                            $(this).parent().parent().parent().parent().addClass("mm-show"); // add active to li of the current link
+                            $(this).parent().parent().parent().parent().parent().addClass("mm-active");
+                        }
+                    });
+
+            $('#btnLogout').on('click', function () {
+                $.ajax({
+                    type: "POST",
+                    url: "auth/logout",
+                    success: function (response) {
+                         if (response === 'true') {
+                             window.location.href = "/login";
+                         }
+                    }
+                });
+            });
+        });
+
+        @*
         $(document).ready(function () {
             if (IsLogin == 'MKT') {
                 $("#liFINARMenu").prop("hidden", true);
@@ -173,6 +193,7 @@
                 $("#liMKTMenu").prop("hidden", true);
             }
         });*@
+
     </script>
 
 </body>

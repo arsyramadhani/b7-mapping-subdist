@@ -29,37 +29,63 @@ namespace MappingSubdist.Controllers
             }
             else
             {
-                return View();
+            return View();
 
             }
+
         } 
 
         [Route("CreateUser")]
         public ActionResult CreateUser()
         {
-
+            if (Session["USERNAME"] == null)
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
             return View("CreateUser");
+
+            }
+
         }
 
         [Route("mappingemail")]
         public ActionResult MappingEmail()
         {
-
+            if (Session["USERNAME"] == null)
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
             return View("MappingEmail");
+
+            }
+
         }
 
         [Route("mappinguser")]
         public ActionResult MappingUser()
         {
-
+            if (Session["USERNAME"] == null)
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
             return View("MappingUser");
+
+            }
+
         }
 
         [Route("login")]
         public ActionResult Login()
         {
-
             return View("Login");
+
+
         }
         #endregion
 

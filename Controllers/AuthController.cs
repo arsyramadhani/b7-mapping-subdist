@@ -30,7 +30,7 @@ namespace MappingSubdist.Controllers
         readonly string SP_MAPPING_SUBDIST = "[DBO].[SP_MAPPING_SUBDIST]";
         readonly string SubdistConn = "RESERVE_DISCOUNT";
 
-        [Route("auth/login")]
+        [Route("authorize/login")]
         [WebMethod(EnableSession = true)]
         public ActionResult Login(SubdistModel model)
         {
@@ -38,7 +38,9 @@ namespace MappingSubdist.Controllers
             System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
 
             string loginUser = WindowsIdentity.GetCurrent().Name.Replace(@"ONEKALBE\", "");
-             
+            
+            var Res = new Dictionary<string, string>() { };
+
             DataTable dt = new DataTable();
             SqlConnection conn = new SqlConnection(conString);
 
@@ -67,62 +69,72 @@ namespace MappingSubdist.Controllers
 
             if (dt.Rows.Count > 0)
             {
-                DirectoryEntry entry = new DirectoryEntry("LDAP://DC=ONEKALBE,DC=DOM");
-                DirectorySearcher mySearcher = new DirectorySearcher(entry);
-                mySearcher.Filter = "(&(objectClass=user)(objectCategory=person)(SamAccountName =" + "yogesh.patel" + "))";
+                IntPtr tokenHandle = new IntPtr(0);
 
-                try
+
+                string UserName, MachineName, Pwd = null;
+
+                //The MachineName property gets the name of your computer.                
+                UserName = model.Username;
+                Pwd = model.Password;
+                MachineName = "ONEKALBE";
+                const int LOGON32_PROVIDER_DEFAULT = 0;
+                const int LOGON32_LOGON_INTERACTIVE = 2;
+                tokenHandle = IntPtr.Zero;
+
+                //Call the LogonUser function to obtain a handle to an access token.
+                bool returnValue = LogonUser(UserName, MachineName, Pwd, LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT, ref tokenHandle);
+
+                if (returnValue == false)
                 {
-                    SearchResult sr = mySearcher.FindOne();
-                    System.Web.HttpContext.Current.Session["ISLOGIN"] = true;
+                    int ret = Marshal.GetLastWin32Error();
+                    if (ret == 1329)
+                    {
+                        System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
+                    }
+                    else
+                    {
+                        System.Web.HttpContext.Current.Session["USERNAME"] = model.Username;
+                        System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
+                     }
                 }
-                catch (Exception)
+                else
                 {
-                    System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
-                    throw;
+                    System.Web.HttpContext.Current.Session["ISLOGIN"] = true;
                 }
             }
             else
             {
-
+                System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
             }
 
- 
-            
-            var Res = new Dictionary<string, string>(){};
 
-            Res.Add("username", System.Web.HttpContext.Current.Session["USERNAME"].ToString());
+            System.Web.HttpContext.Current.Session["USERNAME"] = model.Username;
+            System.Web.HttpContext.Current.Session["ISLOGIN"] = true;
+
             Res.Add("islogin", System.Web.HttpContext.Current.Session["ISLOGIN"].ToString().ToLower());
 
-            return Json(Res);
+            if (System.Web.HttpContext.Current.Session["ISLOGIN"].ToString().ToLower() == "false")
+            {
+                return Json(Res);
+
+            }
+            else
+            {
+                Res.Add("username", System.Web.HttpContext.Current.Session["USERNAME"].ToString());
+                return Json(Res);
+            }
+
         }
-        
-        [Route("authorize/login")]
-        [WebMethod(EnableSession = true)]
-        public ActionResult LoginProcess(SubdistModel model)
-        {
-            string loginUser = "yogesh.patel";
-             
-
-            SearchResultCollection results;
-            DirectorySearcher ds = null;
-            DirectoryEntry de = new DirectoryEntry("LDAP://DC=ONEKALBE,DC=DOM");
-
-            ds = new DirectorySearcher(de);
-            ds.Filter = "(&(objectCategory=User)(objectClass=person)(samaccountname=" + loginUser + "))";
-
-            SearchResult sr = ds.FindOne();
-
-            //Path    "LDAP://CN=Yogesh Patel,OU=Users,OU=PT Bintang Toedjoe,OU=Outsources,OU=Kalbe Farma,OU=Resources,DC=onekalbe,DC=dom"    string
-
-
-            return Json(sr);
-        }
+         
 
         [Route("auth/logout")]
         public ActionResult Logout()
         {
-            return Json("OK");
+            System.Web.HttpContext.Current.Session["USERNAME"] = null;
+            System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
+
+            return Json("true");
         }
 
     };
