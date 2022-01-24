@@ -113,6 +113,7 @@ namespace MappingSubdist.Controllers
 
             SearchResult sr = ds.FindOne();
 
+            //Path    "LDAP://CN=Yogesh Patel,OU=Users,OU=PT Bintang Toedjoe,OU=Outsources,OU=Kalbe Farma,OU=Resources,DC=onekalbe,DC=dom"    string
 
 
             return Json(sr);
