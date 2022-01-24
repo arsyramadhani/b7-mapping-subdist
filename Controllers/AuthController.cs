@@ -14,6 +14,8 @@ using System.Data.SqlClient;
 using Newtonsoft.Json;
 using MappingSubdist.Models;
 using System.Web.Services;
+using System.DirectoryServices;
+using System.Diagnostics;
 
 namespace MappingSubdist.Controllers
 {
@@ -62,55 +64,30 @@ namespace MappingSubdist.Controllers
                 throw ex;
             }
 
-            if (dt.Rows.Count >= 0)
-            {
 
-                IntPtr tokenHandle = new IntPtr(0);
+            if (dt.Rows.Count > 0)
+            {
+                DirectoryEntry entry = new DirectoryEntry("LDAP://DC=ONEKALBE,DC=DOM");
+                DirectorySearcher mySearcher = new DirectorySearcher(entry);
+                mySearcher.Filter = "(&(objectClass=user)(objectCategory=person)(SamAccountName =" + "yogesh.patel" + "))";
+
                 try
                 {
-                    string UserName, MachineName, Pwd = null;
-                    UserName = model.Username;
-                    Pwd = model.Password;
-                    MachineName = "ONEKALBE";
-                    const int LOGON32_PROVIDER_DEFAULT = 0;
-                    const int LOGON32_LOGON_INTERACTIVE = 2;
-                    tokenHandle = IntPtr.Zero;
-
-                    //Call the LogonUser function to obtain a handle to an access token.
-                    bool returnValue = LogonUser(UserName, MachineName, Pwd, LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT, ref tokenHandle);
-
+                    SearchResult sr = mySearcher.FindOne();
                     System.Web.HttpContext.Current.Session["ISLOGIN"] = true;
-                    System.Web.HttpContext.Current.Session["USERNAME"] = model.Username;  
-
-                    if (returnValue == false)
-                    {
-                        int ret = Marshal.GetLastWin32Error();
-                        if (ret == 1329)
-                        {
-                            System.Web.HttpContext.Current.Session["ISLOGIN"] = true;
-                            System.Web.HttpContext.Current.Session["USERNAME"] = model.Username;
-                            System.Web.HttpContext.Current.Session["xUser"] = model.Username;
-                        }
-                    }
-                    else
-                    {
-                        System.Web.HttpContext.Current.Session["ISLOGIN"] = true;
-                        System.Web.HttpContext.Current.Session["USERNAME"] = model.Username;
-                    }
-
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
-                    throw ex;
+                    throw;
                 }
-
             }
             else
             {
-                System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
-                System.Web.HttpContext.Current.Session["USERNAME"] = model.Username;
+
             }
+
+ 
             
             var Res = new Dictionary<string, string>(){};
 
@@ -118,7 +95,28 @@ namespace MappingSubdist.Controllers
             Res.Add("islogin", System.Web.HttpContext.Current.Session["ISLOGIN"].ToString().ToLower());
 
             return Json(Res);
-        } 
+        }
+        
+        [Route("authorize/login")]
+        [WebMethod(EnableSession = true)]
+        public ActionResult LoginProcess(SubdistModel model)
+        {
+            string loginUser = "yogesh.patel";
+             
+
+            SearchResultCollection results;
+            DirectorySearcher ds = null;
+            DirectoryEntry de = new DirectoryEntry("LDAP://DC=ONEKALBE,DC=DOM");
+
+            ds = new DirectorySearcher(de);
+            ds.Filter = "(&(objectCategory=User)(objectClass=person)(samaccountname=" + loginUser + "))";
+
+            SearchResult sr = ds.FindOne();
+
+
+
+            return Json(sr);
+        }
 
         [Route("auth/logout")]
         public ActionResult Logout()

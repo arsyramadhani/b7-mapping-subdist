@@ -92,7 +92,7 @@
             $('#btnSubmit').on('click', function () {
                 $.ajax({
                     type: "POST",
-                    url: "auth/login",
+                    url: "authorize/login",
                     data: JSON.stringify({
                         Username: $('#username').val(),
                         Password: $('#password').val()
@@ -100,7 +100,18 @@
                     dataType: "json",
                     contentType: 'application/json; charset=utf-8',
                     success: function (res) {
-                        console.log(res) 
+                        console.log(res)
+                        if (res.islogin === 'true') {
+                            window.location.href = "/";
+                        } else {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'error',
+                                title: 'Username atau password salah',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
                     }
                 });
             });
