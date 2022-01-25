@@ -16,7 +16,7 @@
 <div class="container">
     <div class="col-md-12">
         <h3><b>@ViewBag.Title</b></h3>
-        <hr /> 
+        <hr />
     </div>
     <div class="col-md-12">
         <div class="form-group row">
@@ -38,8 +38,10 @@
                 </select>
             </div>
         </div>
+        <hr />
+        <button class="btn btn-light waves-effect waves-light" id="btnAdd" disabled data-toggle='modal' data-target='#modalAdd' style="margin-bottom: 16px">Tambah Data</button>
+        <br />
     </div>
-    <hr />
     <div class="col-md-12">
         <table id="tblSubdist" class="table table-striped table-bordered zero-configuration" style="width:100%;">
             <thead>
@@ -64,7 +66,7 @@
                 <h4 class="modal-title" id="myModalLabel">Edit Email Subdist</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" action="#"> 
+                <form class="form-horizontal" action="#">
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label" for="kodeSubdist">Kode</label>
                         <div class="col-sm-8">
@@ -90,7 +92,7 @@
                         </div>
                     </div>
                 </form>
-              </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light waves-effect" data-dismiss="modal" id="btnClose">Tutup</button>
                 <button type="button" class="btn btn-primary waves-effect waves-light" id="btnSubmit">Simpan</button>
@@ -99,38 +101,146 @@
     </div><!-- /.modal-dialog -->
 </div>
 
+<div id="modalAdd" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalAddLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="modalAddLabel">Tambah Data Subdist</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" action="#">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="sel_subdist">Subdist</label>
+                        <div class="col-sm-8">
+                            <select id="sel_subdist">
+                            </select>
+                        </div>
+                    </div> <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="sel_subdist">Finar</label>
+                        <div class="col-sm-8">
+                            <select id="sel_finar">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="phone">Phone</label>
+                        <div class="col-sm-8">
+                            <input type="tel" id="phone" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="email">Email</label>
+                        <div class="col-sm-8">
+                            <input type="email" id="email" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light waves-effect" data-dismiss="modal" id="btnCloseAdd">Tutup</button>
+                <button type="button" class="btn btn-primary waves-effect waves-light" id="addSubdistSubmit">Simpan</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
 <script src="~/Scripts/jquery-3.4.1.min.js"></script>
 <script src="~/Scripts/sweetalert2.all.min.js"></script>
 <script src="~/Scripts/select2.min.js"></script>
-<script src="~/Scripts/jquery.dataTables.min.js"></script>
+<script src="~/Scripts/jquery.dataTables.min.js"></script> 
 <script>
-    $(document).ready(function () {  
+    $(document).ready(function () { 
+
         $('#sel_region').select2({
             minimumResultsForSearch: Infinity
         });
+
+        $('#sel_subdist').select2({
+            minimumResultsForSearch: Infinity
+        });
+
         $('#sel_cabang').select2({
             minimumResultsForSearch: Infinity,
             placeholder: "Pilih Cabang"
-        }); 
-          
-        $('#sel_region').on('select2:select', function (e) { 
-            var data = e.params.data.id; 
+        });
+        $('#sel_finar').select2({
+            placeholder: "Pilih Finar"
+        });
+
+        $('#sel_region').on('select2:select', function (e) {
+            var data = e.params.data.id;
             getCabangByRegion(data)
         });
         $('#sel_cabang').on('select2:select', function (e) {
             var data = e.params.data.id;
-            getSubdistByCabang(data)
+            getSubdistEmailByCabang(data, $('#sel_cabang').val())
+            getUnusedSubdist($('#sel_cabang').val())
+            getUser()
         });
 
         $('#btnSubmit').on('click', function () {
             let kodeSubdist = $('#kodeSubdist').val();
             let email = $('#emailAfter').val();
-            kodeSubdist && submitModal(kodeSubdist, email) 
-        }); 
+            kodeSubdist && submitModal(kodeSubdist, email)
+        });
+
         $('#btnClose').on('click', function () {
             modalValue('clear')
-        }); 
-    }); 
+        });
+        $('#btnCloseAdd').on('click', function () {
+            modalValue('clearadd')
+            getUnusedSubdist($('#sel_cabang').val())
+            getUser()
+        });
+
+        $('#addSubdistSubmit').on('click', function () {
+            let DTO = {
+                kodesubdist: $('#sel_subdist').val(),
+                username: $('#sel_finar').val(), 
+                email: $('#email').val(),
+                phone: $('#phone').val()
+            } 
+            if (validateForm(DTO)) { 
+                $.ajax({
+                    type: "POST",
+                    url: "subdist",
+                    data: JSON.stringify({
+                        Option: "POST_SUBDIST_EMAIL",
+                        Username: DTO.username,
+                        Phone: DTO.phone,
+                        Email: DTO.email,
+                        KodeSubdist: DTO.kodesubdist
+                    }),
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (res) {
+                        let result = JSON.parse(res)
+                        if (result[0].RESULT === 'true') {
+                            $('#btnCloseAdd').trigger('click');
+                            
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: 'Data berhasil disimpan',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        } else {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'error',
+                                title: 'Gagal menyimpan data',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        } 
+                    }
+                });
+            }
+            
+        });
+    });
 
     const getCabangByRegion = (kodeRegion) => {
         $.ajax({
@@ -139,12 +249,12 @@
             data: JSON.stringify({
                 Option: "GET_CABANG",
                 Region: kodeRegion
-            }), 
+            }),
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
-            success: function (res) { 
+            success: function (res) {
                 $('#sel_cabang').empty()
-                result = '' 
+                result = ''
                 JSON.parse(res).forEach(item => {
                     result += `<option value="${item.cabang}">${item.namacabang}</option>`
                 })
@@ -154,31 +264,31 @@
         });
     }
 
-    const getSubdistByCabang = (kodeCabang) => { 
-
+    const getSubdistEmailByCabang = (dataIdCabang, region) => { 
         var table = $('#tblSubdist').DataTable();
         table.destroy();
         $.ajax({
             type: "POST",
             url: "subdist",
             data: JSON.stringify({
-                Option: "GET_SUBDIST",
-                KodeCabang: kodeCabang
-            }), 
+                Option: "GET_SUBDIST_BY_CABANG",
+                KodeCabang: dataIdCabang,
+                Region: region
+            }),
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
-            success: function (res) { 
+            success: function (res) {
 
                 $("#tblSubdist").DataTable({
                     "data": JSON.parse(res),
                     "lengthChange": true,
                     "searching": false,
-                    "columns": [ 
+                    "columns": [
                         { "data": "row_num" },
                         { "data": "Kodesubdist" },
                         { "data": "NamaSubdist" },
                         { "data": "GROUPSUBDIST" },
-                        { "data": "AlamatEmail" }, 
+                        { "data": "AlamatEmail" },
                         {
                             "data": null,
                             "defaultContent": "<button class='form-control-sm delete' type='button' name='delete' data-toggle='modal' data-target='#myModal'>Edit</button>"
@@ -196,7 +306,7 @@
                 email: data[4].innerText
             }
             modalValue('set', item)
-        });  
+        });
     }
 
     const submitModal = (kodeSubdist, email) => {
@@ -223,7 +333,7 @@
                     })
                     $('#btnClose').trigger('click');
                     modalValue('clear')
-                    getSubdistByCabang($('#sel_cabang').val())
+                    getSubdistEmailByCabang($('#sel_cabang').val(), $('#sel_region').val())
 
                 } else {
                     Swal.fire({
@@ -245,6 +355,12 @@
             $('#kodeNamaSubdist').val(null);
             $('#emailBefore').val(null);
             $('#emailAfter').val(null);
+            $('#phone').val(null);
+            $('#email').val(null);
+        }
+       if (type === 'clearadd') {
+            $('#phone').val(null);
+            $('#email').val(null);
         }
         if (type === 'set') {
             $('#kodeSubdist').val(item.kodeSubdist);
@@ -252,6 +368,92 @@
             $('#emailBefore').val(item.email);
             $('#emailAfter').val(item.email);
         }
+    }
+
+    const getUnusedSubdist = (cabang) => {
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_SUBDIST_BY_CABANG_WITH_REGION",
+                KodeCabang: cabang
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                let data = JSON.parse(res) 
+
+                $('#sel_subdist').empty()
+                result = ''
+
+                if (data.length > 0) {
+                    data.forEach(item => {
+                        result += `<option value="${item.Kodesubdist}">${item.subdistdisplay}</option>`
+                    })
+                    $('#sel_subdist').append(result)
+                    $('#btnAdd').attr('class', 'btn btn-primary waves-effect waves-light'); 
+                    $('#btnAdd').removeAttr('disabled');
+                } else { 
+                    $('#btnAdd').attr('class', 'btn btn-outline-light waves-effect waves-light  ');
+                    $('#btnAdd').attr('title', 'Cabang tidak memiliki subdist untuk ditambahkan');
+                    $('#btnAdd').attr('disabled', 'disabled');
+                }
+
+
+
+            }
+        });
+    }
+
+    const getUser = () => {
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_USER"
+            }),
+
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) { 
+                $('#sel_finar').empty()
+                result = ''
+                JSON.parse(res).forEach(item => {
+                    result += `<option value="${item.USERNAME}">${item.USERNAME}</option>`
+                })
+                $('#sel_finar').append('<option value="-1" selected>Pilih User</option>')
+                $('#sel_finar').append(result)
+            }
+        });
+    }
+
+    const validateForm = (item) => { 
+
+        const errorSwal = (nama) => {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: nama + ' tidak boleh kosong',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            return false 
+        } 
+       
+        if (item.kodesubdist === '' || item.kodesubdist === null ) {
+            return errorSwal('Kode Subdist') 
+        }
+        if (item.username === '-1' || item.username === null) {
+            return errorSwal('Finar')
+        }
+        if (item.phone.trim() === '') {
+            return errorSwal('Phone')
+        }
+        if (item.email.trim() === '') {
+            return errorSwal('Email')
+        }
+
+        return true 
     }
 
 </script>

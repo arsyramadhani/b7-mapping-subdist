@@ -300,6 +300,7 @@
     <Content Include="Content\Image\QRCode\QrCode2.jpg" />
     <Content Include="Content\Image\QRCode\QrCode3.jpg" />
     <Content Include="Content\jquery.dataTables.min.css" />
+    <Content Include="Content\jquery.tooltipster.js" />
     <Content Include="Content\plugins\autocomplete\countries.js" />
     <Content Include="Content\plugins\autocomplete\demo.js" />
     <Content Include="Content\plugins\autocomplete\jquery.autocomplete.min.js" />
@@ -842,6 +843,7 @@
     <Content Include="Content\select2.min.css" />
     <Content Include="Content\style.css" />
     <Content Include="Content\sweetalert.css" />
+    <Content Include="Content\tooltipster.bundle.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -1072,6 +1074,7 @@
     <Content Include="Scripts\jquery.dataTables.min.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\jquery.slimscroll.js" />
+    <Content Include="Scripts\jquery.tooltipster.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -1082,6 +1085,7 @@
     <Content Include="Scripts\sweetalert.min.js" />
     <Content Include="Scripts\sweetalert2.all.min.js" />
     <Content Include="Scripts\Template\modernizr.min.js" />
+    <Content Include="Scripts\tooltipster.bundle.min.js" />
     <Content Include="Scripts\waves.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

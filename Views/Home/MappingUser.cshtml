@@ -38,6 +38,7 @@
                     <th width="10%">Username</th>
                     <th width="10%">Kode Subdist</th>
                     <th width="25%">Nama Subdist</th>
+                    <th width="25%">Cabang</th>
                     <th width="10%">Action</th>
                 </tr>
             </thead>
@@ -132,8 +133,9 @@
         });
         $('#sel_cabang').on('select2:select', function (e) {
             let data = e.params.data.id;
+            let username = $('#username').val()
             console.log(data)
-            getSubdistByCabang(data)
+            getSubdistByCabang(data, username)
         });
 
         $('#btnSubmit').on('click', function () {
@@ -238,6 +240,7 @@
                         { "data": "username" },
                         { "data": "kodesubdist" },
                         { "data": "NamaSubDist" },
+                        { "data": "namacabang" },
                         {
                             "data": null,
                             "defaultContent": "<button class='form-control-sm delete' type='button' name='delete' id='btnDelete'>Delete</button>"
@@ -333,13 +336,14 @@
         });
     }
 
-    const getSubdistByCabang = (kodeCabang) => {
+    const getSubdistByCabang = (kodeCabang, username) => {
         $.ajax({
             type: "POST",
             url: "subdist",
             data: JSON.stringify({
-                Option: "GET_SUBDIST",
-                KodeCabang: kodeCabang
+                Option: "GET_SUBDIST_FILTERED",
+                KodeCabang: kodeCabang,
+                Username: username
             }),
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
@@ -348,7 +352,7 @@
                 $('#sel_subdist').empty()
                 result = ''
                 JSON.parse(res).forEach(item => {
-                    result += `<option value="${item.Kodesubdist}">${item.Kodesubdist} | ${item.NamaSubdist}</option>`
+                    result += `<option value="${item.kodesubdist}">${item.kodesubdist} | ${item.namasubdist}</option>`
                 })
                 $('#sel_subdist').append('<option value="0" selected disabled >Pilih Subdist</option>')
                 $('#sel_subdist').append(result)

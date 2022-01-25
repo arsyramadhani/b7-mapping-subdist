@@ -67,18 +67,26 @@
                         type: "POST",
                         url: "subdist",
                         data: JSON.stringify({
-                            Option: "GET_USER",
-                            Username: DTO.Username
+                            Option: "POST_USER",
+                            Username: DTO.Username,
+                            Email: DTO.Email,
+                            Password: DTO.Password
                         }),
                         dataType: "json",
                         contentType: 'application/json; charset=utf-8',
                         success: function (res) {
                             let result = JSON.parse(res)
-                            if (result.length === 0) {
-                                @*kosong*@
-                                submitForm(DTO)
+                                console.log(result)
+                            if (result[0].RESULT === 'true') {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    title: 'Data berhasil disimpan',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                modalValue('clear')
                             } else {
-                                @*ada*@
                                 Swal.fire({
                                     position: 'center',
                                     icon: 'error',
@@ -89,6 +97,32 @@
                             }
                         }
                     })
+                    @*$.ajax({
+                        type: "POST",
+                        url: "subdist",
+                        data: JSON.stringify({
+                            Option: "GET_USER",
+                            Username: DTO.Username
+                        }),
+                        dataType: "json",
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (res) {
+                            let result = JSON.parse(res)
+                            if (result.length === 0) { 
+                                submitForm(DTO)
+                            } else { 
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'error',
+                                    title: 'Username sudah ada',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }
+                        }
+                    })*@
+
+
                 }
             });
 
@@ -98,39 +132,7 @@
         });
 
         const submitForm = (item) => {
-            $.ajax({
-                type: "POST",
-                url: "subdist",
-                data: JSON.stringify({
-                    Option: "POST_USER",
-                    Username: item.Username,
-                    Email: item.Email,
-                    Password: item.Password
-                }),
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
-                success: function (res) {
-                    let result = JSON.parse(res) 
-                    if (result[0].RESULT === 'true') {
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'success',
-                            title: 'Data berhasil disimpan',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    modalValue('clear')
-                    } else {
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'error',
-                            title: 'Username sudah ada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                }
-            })
+            
         }
 
         const validateForm = (item) => {
