@@ -34,8 +34,11 @@ namespace MappingSubdist.Controllers
         [WebMethod(EnableSession = true)]
         public ActionResult Login(SubdistModel model)
         {
-            System.Web.HttpContext.Current.Session["USERNAME"] = null;
             System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
+            System.Web.HttpContext.Current.Session["USERNAME"] = null;
+            System.Web.HttpContext.Current.Session["NIK"] = false;
+            System.Web.HttpContext.Current.Session["JOBTTLNAME"] = false;
+            System.Web.HttpContext.Current.Session["EMAIL"] = false;
 
             string loginUser = WindowsIdentity.GetCurrent().Name.Replace(@"ONEKALBE\", "");
             
@@ -100,28 +103,32 @@ namespace MappingSubdist.Controllers
                 }
                 else
                 {
-                    System.Web.HttpContext.Current.Session["ISLOGIN"] = true;
+                    System.Web.HttpContext.Current.Session["ISLOGIN"] = true;  
+                    System.Web.HttpContext.Current.Session["USERNAME"] = dt.Rows[0]["USERNAME"].ToString();
+                    System.Web.HttpContext.Current.Session["NIK"] = dt.Rows[0]["NIK"].ToString();
+                    System.Web.HttpContext.Current.Session["JOBTTLNAME"] = dt.Rows[0]["JOBTTLNAME"].ToString();
+                    System.Web.HttpContext.Current.Session["EMAIL"] = dt.Rows[0]["EMAIL"].ToString();
                 }
             }
             else
             {
                 System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
             }
-
-
-            System.Web.HttpContext.Current.Session["USERNAME"] = model.Username;
-            System.Web.HttpContext.Current.Session["ISLOGIN"] = true;
+             
+            //System.Web.HttpContext.Current.Session["ISLOGIN"] = true;
 
             Res.Add("islogin", System.Web.HttpContext.Current.Session["ISLOGIN"].ToString().ToLower());
 
             if (System.Web.HttpContext.Current.Session["ISLOGIN"].ToString().ToLower() == "false")
             {
-                return Json(Res);
-
+                return Json(Res); 
             }
             else
             {
                 Res.Add("username", System.Web.HttpContext.Current.Session["USERNAME"].ToString());
+                Res.Add("nik", System.Web.HttpContext.Current.Session["NIK"].ToString());
+                Res.Add("jobttlname", System.Web.HttpContext.Current.Session["JOBTTLNAME"].ToString());
+                Res.Add("email", System.Web.HttpContext.Current.Session["EMAIL"].ToString()); 
                 return Json(Res);
             }
 

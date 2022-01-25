@@ -76,7 +76,7 @@
                             let result = JSON.parse(res)
                             if (result.length === 0) {
                                 @*kosong*@
-                                submitForm(DTO.Username)
+                                submitForm(DTO)
                             } else {
                                 @*ada*@
                                 Swal.fire({
@@ -103,7 +103,9 @@
                 url: "subdist",
                 data: JSON.stringify({
                     Option: "POST_USER",
-                    Username: item.Username
+                    Username: item.Username,
+                    Email: item.Email,
+                    Password: item.Password
                 }),
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',

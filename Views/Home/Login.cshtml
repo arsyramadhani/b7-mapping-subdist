@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - Mapping Subdist</title>
     <!-- App favicon -->
     <link rel="shortcut icon" href="~/Content/assets/images/favicon.ico">
     <!-- App css -->
@@ -40,8 +40,7 @@
             <div class="card-block">
 
                 <div class="account-box">
-
-                    <div class="card-box p-5">
+                    <div id="userForm" class="card-box p-5">
                         <h2 class="text-uppercase text-center pb-4">
                             <a href="/" class="text-success">
                                 <span><img src="~/Content/Image/LogoB7.png" alt="" height="96px"></span>
@@ -52,22 +51,17 @@
                                 <input class="form-control" type="text" id="username" placeholder="Enter your email">
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <div class="col-12">
                                 <label for="password">Password</label>
                                 <input class="form-control" type="password" id="password" placeholder="Enter your password">
                             </div>
                         </div>
-
-
                         <div class="form-group row text-center">
                             <div class="col-12">
                                 <button class="btn btn-block btn-custom waves-effect waves-light" id="btnSubmit" type="submit">Sign In</button>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
 
@@ -75,7 +69,7 @@
         </div>
 
         <div class="m-t-40 text-center">
-            <p class="account-copyright">2021<span class="d-none d-sm-inline-block"> - PT. Bintang Toedjoe</span></p>
+            <p class="account-copyright">@DateTime.Now.Year <span class="d-none d-sm-inline-block"> - PT. Bintang Toedjoe</span></p>
         </div>
 
     </div>
@@ -85,33 +79,43 @@
     <script src="~/Scripts/sweetalert2.all.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#btnSubmit').on('click', function () {
-                $.ajax({
-                    type: "POST",
-                    url: "authorize/login",
-                    data: JSON.stringify({
-                        Username: $('#username').val(),
-                        Password: $('#password').val()
-                    }),
-                    dataType: "json",
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (res) {
-                        console.log(res)
-                        if (res.islogin === 'true') {
-                            window.location.href = "/";
-                        } else {
-                            Swal.fire({
-                                position: 'center',
-                                icon: 'error',
-                                title: 'Username atau password salah',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
-                    }
-                });
+            $('#userForm').keyup(function (e) {
+                if (e.keyCode === 13) {
+                    submitUserLogin()
+                }
             });
+
+            $('#btnSubmit').on('click', function () {
+               submitUserLogin()
+            }); 
         });
+
+        const submitUserLogin = () => {
+            $.ajax({
+                type: "POST",
+                url: "authorize/login",
+                data: JSON.stringify({
+                    Username: $('#username').val(),
+                    Password: $('#password').val()
+                }),
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                success: function (res) {
+                    console.log(res)
+                    if (res.islogin === 'true') {
+                        window.location.href = "/";
+                    } else {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: 'Username atau password salah',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }
+            });
+        }
     </script>
 
 </body>

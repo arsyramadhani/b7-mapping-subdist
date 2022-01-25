@@ -236,8 +236,8 @@ D:\DEV\b7-mapping-subdist\bin\System.Web.WebPages.Razor.xml
 D:\DEV\b7-mapping-subdist\bin\Newtonsoft.Json.xml
 D:\DEV\b7-mapping-subdist\bin\Antlr3.Runtime.pdb
 D:\DEV\b7-mapping-subdist\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-D:\DEV\b7-mapping-subdist\obj\Debug\MappingSubdist.csproj.AssemblyReference.cache
 D:\DEV\b7-mapping-subdist\obj\Debug\MappingSubdist.csproj.CoreCompileInputs.cache
 D:\DEV\b7-mapping-subdist\obj\Debug\MappingSubdist.csproj.CopyComplete
 D:\DEV\b7-mapping-subdist\obj\Debug\MappingSubdist.dll
 D:\DEV\b7-mapping-subdist\obj\Debug\MappingSubdist.pdb
+D:\Dev\b7-mapping-subdist\obj\Debug\MappingSubdist.csprojAssemblyReference.cache
