@@ -141,7 +141,7 @@ namespace MappingSubdist.Controllers
             System.Web.HttpContext.Current.Session["USERNAME"] = null;
             System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
 
-            return Json("true");
+            return RedirectToAction("Login", "Home");
         }
 
     };

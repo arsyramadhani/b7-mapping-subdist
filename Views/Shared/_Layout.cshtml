@@ -26,6 +26,9 @@
     <script src="~/Content/assets/js/jquery.slimscroll.js"></script>
     <script src="~/Scripts/jquery.dataTables.min.js"></script>
     <script src="~/Content/plugins/sweet-alert/sweetalert2.min.js"></script>
+    @{ 
+        string url = "/mappingsubdist";
+    }
 </head>
 <body>
     <div id="wrapper">
@@ -35,7 +38,7 @@
                 <!-- LOGO -->
                 <div style="height: 48px"></div>
                 <div class="topbar-left" style="margin-top: 24px">
-                    <a href="/" class="logo">
+                    <a href="@url/" class="logo">
                         <span>
                             <img src="~/Content/Image/LogoB7.png" width="80%" />
                         </span>
@@ -62,17 +65,17 @@
                         <li class="menu-title">Menu</li>
 
                         <li>
-                            <a href="/createuser">
+                            <a href="@url/createuser">
                                 <i class="dripicons-user"></i><span> Create User </span>
                             </a>
                         </li>
                         <li>
-                            <a href="/mappingemail">
+                            <a href="@url/mappingemail">
                                 <i class="dripicons-mail"></i><span> Mapping Email </span>
                             </a>
                         </li>
                         <li>
-                            <a href="mappinguser">
+                            <a href="@url/mappinguser">
                                 <i class="dripicons-user-id"></i><span> mappinguser </span>
                             </a>
                         </li>
@@ -83,7 +86,7 @@
                 <div id="sidebar-menu" style="bottom: 0px; position: fixed">
                     <ul class="metismenu" id="side-menu">
                         <li style="cursor: pointer">
-                            <a id="btnLogout">
+                            <a href="@url/auth/logout" id="btnLogout">
                                 <i class="dripicons-exit"></i><span> Logout </span>
                             </a>
                         </li>
@@ -128,7 +131,7 @@
             </div> <!-- content -->
 
             <footer class="footer">
-                @DateTime.Now.Year <span class="d-none d-sm-inline-block"> - PT. Bintang Toedjoe</span>
+                @DateTime.Now.Year <span class="d-none d-sm-inline-block"> - PT. Bintang Toedjoe @url </span>
             </footer>
 
         </div>
@@ -168,19 +171,7 @@
                             $(this).parent().parent().parent().parent().addClass("mm-show"); // add active to li of the current link
                             $(this).parent().parent().parent().parent().parent().addClass("mm-active");
                         }
-                    });
-
-            $('#btnLogout').on('click', function () {
-                $.ajax({
-                    type: "POST",
-                    url: "auth/logout",
-                    success: function (response) {
-                         if (response === 'true') {
-                             window.location.href = "/login";
-                         }
-                    }
-                });
-            });
+                    }); 
         });
 
         @*
