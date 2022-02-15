@@ -117,7 +117,7 @@
                             </select>
                         </div>
                     </div> <div class="form-group row">
-                        <label class="col-sm-4 col-form-label" for="sel_subdist">Finar</label>
+                        <label class="col-sm-4 col-form-label" for="sel_finar">Finar</label>
                         <div class="col-sm-8">
                             <select id="sel_finar">
                             </select>
@@ -156,16 +156,17 @@
             minimumResultsForSearch: Infinity
         });
 
-        $('#sel_subdist').select2({
-            minimumResultsForSearch: Infinity
+        $('#sel_subdist').select2({  
+            dropdownParent: $("#modalAdd") 
         });
 
-        $('#sel_cabang').select2({
-            minimumResultsForSearch: Infinity,
+        $('#sel_cabang').select2({ 
             placeholder: "Pilih Cabang"
         });
+
         $('#sel_finar').select2({
-            placeholder: "Pilih Finar"
+            placeholder: "Pilih Finar",
+            dropdownParent: $("#modalAdd") 
         });
 
         $('#sel_region').on('select2:select', function (e) {
@@ -226,6 +227,7 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                            getSubdistEmailByCabang($('#sel_cabang').val(), $('#sel_region').val())
                         } else {
                             Swal.fire({
                                 position: 'center',
@@ -234,6 +236,7 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                            getSubdistEmailByCabang($('#sel_cabang').val(), $('#sel_region').val())
                         } 
                     }
                 });

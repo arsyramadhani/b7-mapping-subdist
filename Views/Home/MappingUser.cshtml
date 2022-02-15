@@ -109,12 +109,14 @@
          $('#sel_region').select2({
             minimumResultsForSearch: Infinity
          });
-        $('#sel_cabang').select2({
-            minimumResultsForSearch: Infinity,
-            placeholder: "Pilih Cabang"
+        $('#sel_cabang').select2({ 
+            placeholder: "Pilih Cabang",
+            dropdownParent: $("#myModal") 
+
         });
         $('#sel_subdist').select2({
-             placeholder: "Pilih Subdist"
+            placeholder: "Pilih Subdist",
+            dropdownParent: $("#myModal")
         }); 
 
         getUser()
