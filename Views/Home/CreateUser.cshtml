@@ -1,396 +1,396 @@
 ﻿
 @{
-    ViewBag.Title = "Create User";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Create User";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style type="text/css">
-    .bd-example-modal-lg .modal-dialog {
-        display: table;
-        position: relative;
-        margin: 0 auto;
-        top: calc(50% - 24px);
-    }
+	.bd-example-modal-lg .modal-dialog {
+		display: table;
+		position: relative;
+		margin: 0 auto;
+		top: calc(50% - 24px);
+	}
 </style>
 
 <div class="container">
-    <div class="col-md-12">
-        <h3><b>@ViewBag.Title</b></h3>
-        <hr />
-        <div class="row">
-            <div class="col-md-12">
-                <h4>Find User / Edit User</h4>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Select Username</label>
-                    <div class="col-sm-4">
-                        <select class="form-control" id="sel_user">
-                        </select>
-                    </div>
-                    <div class="col-sm-4">
-                        <button class="btn btn-sm btn-primary" id="btnShowDetail">Lihat Detail</button>
-                    </div>
-                </div>
-                <form hidden="hidden" id="form_username_dtl" action="#">
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="dtlUsername">Username</label>
-                        <input type="text" id="dtlUsernameVal" class="form-control" hidden>
-                        <div class="col-sm-4">
-                            <input type="text" id="dtlUsername" class="form-control" placeholder="Enter Username" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="dtlEmail">Email</label>
-                        <div class="col-sm-4">
-                            <input type="text" id="dtlEmail" class="form-control" placeholder="Enter Email">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="dtlPassword">Password</label>
-                        <div class="col-sm-4">
-                            <input type="password" id="dtlPassword" class="form-control" placeholder="Enter password">
-                            <input class="mt-2" type="checkbox" id="showDtlPassword"> <span>Show Password</span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-4">
-                            <button class="btn btn-primary btn-md " id="btnDtlSubmit" style="background-color:darkcyan;color:white;">Save</button>
-                             
-                            <button class="btn btn-primary btn-md " id="btnDtlClose" style="background-color:dimgrey;color:white;">Close</button>
-                        </div> 
-                    </div>
-                </form>
+	<div class="col-md-12">
+		<h3><b>@ViewBag.Title</b></h3>
+		<hr />
+		<div class="row">
+			<div class="col-md-12">
+				<h4>Find User / Edit User</h4>
+				<div class="form-group row">
+					<label class="col-sm-2 col-form-label">Select Username</label>
+					<div class="col-sm-4">
+						<select class="form-control" id="sel_user">
+						</select>
+					</div>
+					<div class="col-sm-4">
+						<button class="btn btn-sm btn-primary" id="btnShowDetail">Lihat Detail</button>
+					</div>
+				</div>
+				<form hidden="hidden" id="form_username_dtl" action="#">
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label" for="dtlUsername">Username</label>
+						<input type="text" id="dtlUsernameVal" class="form-control" hidden>
+						<div class="col-sm-4">
+							<input type="text" id="dtlUsername" class="form-control" placeholder="Enter Username" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label" for="dtlEmail">Email</label>
+						<div class="col-sm-4">
+							<input type="text" id="dtlEmail" class="form-control" placeholder="Enter Email">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label" for="dtlPassword">Password</label>
+						<div class="col-sm-4">
+							<input type="password" id="dtlPassword" class="form-control" placeholder="Enter password">
+							<input class="mt-2" type="checkbox" id="showDtlPassword"> <span>Show Password</span>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-sm-2"></div>
+						<div class="col-sm-4">
+							<button class="btn btn-primary btn-md " id="btnDtlSubmit" style="background-color:darkcyan;color:white;">Save</button>
+							 
+							<button class="btn btn-primary btn-md " id="btnDtlClose" style="background-color:dimgrey;color:white;">Close</button>
+						</div> 
+					</div>
+				</form>
 
-            </div>
-        </div>
-        <hr />
-        <div class="row">
-            <div class="col-md-12">
-                <h4>Create New User</h4>
-                <br />
-                <form id="form_username" action="#">
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Username</label>
-                        <div class="col-sm-4">
-                            <input type="text" id="username" class="form-control" placeholder="Enter Username">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Email</label>
-                        <div class="col-sm-4">
-                            <input type="email" id="email" class="form-control" placeholder="Enter Email">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Password</label>
-                        <div class="col-sm-4">
-                            <input type="password" id="password" class="form-control" placeholder="Enter password">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-4">
-                            <button class="btn btn-primary btn-md " id="btnSubmit" style="background-color:darkcyan;color:white;">Save</button>
-                            <button class="btn btn-primary btn-md " id="btnReset" style="background-color:dimgrey;color:white;">Reset</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <hr />
-
-
-    </div> 
-    <script src="~/Scripts/jquery-3.4.1.min.js"></script> 
-    <script src="~/Scripts/sweetalert2.all.min.js"></script>
-    <script src="~/Scripts/select2.min.js"></script>
-
-    <script>
-        $(document).ready(function () {
-
-            $('#sel_user').select2();
-
-            // Mengambil Data User
-            getUser()
-
-            $('#btnSubmit').on('click', function () {
-                 
-                let DTO = {
-                    Username: $('#username').val(),
-                    Email: $('#email').val(),
-                    Password: $('#password').val()
-                }
-                if (validateForm(DTO)) {
-                    $.ajax({
-                        type: "POST",
-                        url: "subdist",
-                        data: JSON.stringify({
-                            Option: "POST_USER",
-                            Username: DTO.Username,
-                            Email: DTO.Email,
-                            Password: DTO.Password
-                        }),
-                        dataType: "json",
-                        contentType: 'application/json; charset=utf-8',
-                        success: function (res) {
-                            let result = JSON.parse(res)
-                                //console.log(result)
-                            if (result[0].RESULT === 'true') {
-                                Swal.fire({
-                                    position: 'center',
-                                    icon: 'success',
-                                    title: 'Data berhasil disimpan',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                modalValue('clear')
-                            } else {
-                                Swal.fire({
-                                    position: 'center',
-                                    icon: 'error',
-                                    title: 'Username sudah ada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                            }
-                        }
-                    }) 
-                }
-            });
-
-            $('#btnDtlSubmit').on('click', function () { 
-                let DTO = {
-                    Username: $('#dtlUsernameVal').val(),
-                    Email: $('#dtlEmail').val() === '' ? '-' : $('#dtlEmail').val(),
-                    Password: $('#dtlPassword').val()
-                }
-                if (validateForm(DTO)) {
-                    Swal.fire({
-                        title: 'Anda yakin akan menyimpan data ini?',
-                        showDenyButton: true,
-                        showCancelButton: true,
-                        confirmButtonText: 'Simpan',
-                        denyButtonText: `Tutup`,
-                    }).then((result) => {
-                        /* Read more about isConfirmed, isDenied below */
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                type: "POST",
-                                url: "subdist",
-                                data: JSON.stringify({
-                                    Option: "POST_USER_CREDENTIAL",
-                                    Username: $('#dtlUsernameVal').val(),
-                                    Email: $('#dtlEmail').val(),
-                                    Password: $('#dtlPassword').val()
-                                }),
-                                dataType: "json",
-                                contentType: 'application/json; charset=utf-8',
-                                success: function (res) {
-                                    let result = JSON.parse(res)[0].RESULT 
-                                    console.log(res)
-                                    if (result === 'true') { 
-                                        Swal.fire({
-                                            position: 'center',
-                                            icon: 'success',
-                                            title: 'Data berhasil disimpan',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        }) 
-
-                                        modalValue('clear')
-                                        $('#form_username_dtl').attr('hidden', 'hidden');
-                                    } else {
-                                        Swal.fire({
-                                            position: 'center',
-                                            icon: 'error',
-                                            title: 'Gagal menyimpan data',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                    }
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Changes are not saved', '', 'info')
-                        }
-                    })
+			</div>
+		</div>
+		<hr />
+		<div class="row">
+			<div class="col-md-12">
+				<h4>Create New User</h4>
+				<br />
+				<form id="form_username" action="#">
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label">Username</label>
+						<div class="col-sm-4">
+							<input type="text" id="username" class="form-control" placeholder="Enter Username">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label">Email</label>
+						<div class="col-sm-4">
+							<input type="email" id="email" class="form-control" placeholder="Enter Email">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label">Password</label>
+						<div class="col-sm-4">
+							<input type="password" id="password" class="form-control" placeholder="Enter password">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-sm-2"></div>
+						<div class="col-sm-4">
+							<button class="btn btn-primary btn-md " id="btnSubmit" style="background-color:darkcyan;color:white;">Save</button>
+							<button class="btn btn-primary btn-md " id="btnReset" style="background-color:dimgrey;color:white;">Reset</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<hr />
 
 
-                    @*$.ajax({
-                        type: "POST",
-                        url: "subdist",
-                        data: JSON.stringify({
-                            Option: "POST_USER",
-                            Username: DTO.Username,
-                            Email: DTO.Email,
-                            Password: DTO.Password
-                        }),
-                        dataType: "json",
-                        contentType: 'application/json; charset=utf-8',
-                        success: function (res) {
-                            let result = JSON.parse(res)
-                            //console.log(result)
-                            if (result[0].RESULT === 'true') {
-                                Swal.fire({
-                                    position: 'center',
-                                    icon: 'success',
-                                    title: 'Data berhasil disimpan',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                modalValue('clear')
-                            } else {
-                                Swal.fire({
-                                    position: 'center',
-                                    icon: 'error',
-                                    title: 'Username sudah ada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                            }
-                        }
-                    })*@
-                }
-            });
+	</div> 
+	<script src="~/Scripts/jquery-3.4.1.min.js"></script> 
+	<script src="~/Scripts/sweetalert2.all.min.js"></script>
+	<script src="~/Scripts/select2.min.js"></script>
 
-            $('#btnReset').on('click', function () {
-                modalValue('clear')
-            }); 
+	<script>
+		$(document).ready(function () {
 
-            $('#form_username_dtl').submit(function (e) {
-                e.preventDefault();
+			$('#sel_user').select2();
 
-            });
+			// Mengambil Data User
+			getUser()
 
-            $('#btnDtlClose').click(function (e) {
-                e.preventDefault();
-                $('#form_username_dtl').attr('hidden', 'hidden');
-            });
+			$('#btnSubmit').on('click', function () {
+				 
+				let DTO = {
+					Username: $('#username').val(),
+					Email: $('#email').val(),
+					Password: $('#password').val()
+				}
+				if (validateForm(DTO)) {
+					$.ajax({
+						type: "POST",
+						url: "subdist",
+						data: JSON.stringify({
+							Option: "POST_USER",
+							Username: DTO.Username,
+							Email: DTO.Email,
+							Password: DTO.Password
+						}),
+						dataType: "json",
+						contentType: 'application/json; charset=utf-8',
+						success: function (res) {
+							let result = JSON.parse(res)
+								//console.log(result)
+							if (result[0].RESULT === 'true') {
+								Swal.fire({
+									position: 'center',
+									icon: 'success',
+									title: 'Data berhasil disimpan',
+									showConfirmButton: false,
+									timer: 1500
+								})
+								modalValue('clear')
+							} else {
+								Swal.fire({
+									position: 'center',
+									icon: 'error',
+									title: 'Username sudah ada',
+									showConfirmButton: false,
+									timer: 1500
+								})
+							}
+						}
+					}) 
+				}
+			});
 
-            $('#btnShowDetail').click(function (e) {
-                e.preventDefault();  
-                getUserCredential();
-                
-            });
+			$('#btnDtlSubmit').on('click', function () { 
+				let DTO = {
+					Username: $('#dtlUsernameVal').val(),
+					Email: $('#dtlEmail').val() === '' ? '-' : $('#dtlEmail').val(),
+					Password: $('#dtlPassword').val()
+				}
+				if (validateForm(DTO)) {
+					Swal.fire({
+						title: 'Anda yakin akan menyimpan data ini?',
+						showDenyButton: true,
+						showCancelButton: true,
+						confirmButtonText: 'Simpan',
+						denyButtonText: `Tutup`,
+					}).then((result) => {
+						/* Read more about isConfirmed, isDenied below */
+						if (result.isConfirmed) {
+							$.ajax({
+								type: "POST",
+								url: "subdist",
+								data: JSON.stringify({
+									Option: "POST_USER_CREDENTIAL",
+									Username: $('#dtlUsernameVal').val(),
+									Email: $('#dtlEmail').val(),
+									Password: $('#dtlPassword').val()
+								}),
+								dataType: "json",
+								contentType: 'application/json; charset=utf-8',
+								success: function (res) {
+									let result = JSON.parse(res)[0].RESULT 
+									console.log(res)
+									if (result === 'true') { 
+										Swal.fire({
+											position: 'center',
+											icon: 'success',
+											title: 'Data berhasil disimpan',
+											showConfirmButton: false,
+											timer: 1500
+										}) 
 
-            $('#showDtlPassword').click(function (e) {
-                e.preventDefault();
-                if ($('#dtlPassword').attr('type') === 'text') {
-                    $('#dtlPassword').attr('type', 'password')
-                } else {
-                    $('#dtlPassword').attr('type', 'text')
-                }
-            });
-        }); 
+										modalValue('clear')
+										$('#form_username_dtl').attr('hidden', 'hidden');
+									} else {
+										Swal.fire({
+											position: 'center',
+											icon: 'error',
+											title: 'Gagal menyimpan data',
+											showConfirmButton: false,
+											timer: 1500
+										})
+									}
+								}
+							});
+						} else if (result.isDenied) {
+							Swal.fire('Changes are not saved', '', 'info')
+						}
+					})
 
-        const validateForm = (item) => {
-            let res = true;
 
-            if (item.Username.trim() === '') {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Username tidak boleh kosong',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                res = false
-                return res
-            }
-            if (item.Email.trim() === '') {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Email tidak boleh kosong',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                res = false
-                return res
-            }
-            if (item.Password.trim() === '') {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Password tidak boleh kosong',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                res = false
-                return res
-            }
-            return res
-        }
+					@*$.ajax({
+						type: "POST",
+						url: "subdist",
+						data: JSON.stringify({
+							Option: "POST_USER",
+							Username: DTO.Username,
+							Email: DTO.Email,
+							Password: DTO.Password
+						}),
+						dataType: "json",
+						contentType: 'application/json; charset=utf-8',
+						success: function (res) {
+							let result = JSON.parse(res)
+							//console.log(result)
+							if (result[0].RESULT === 'true') {
+								Swal.fire({
+									position: 'center',
+									icon: 'success',
+									title: 'Data berhasil disimpan',
+									showConfirmButton: false,
+									timer: 1500
+								})
+								modalValue('clear')
+							} else {
+								Swal.fire({
+									position: 'center',
+									icon: 'error',
+									title: 'Username sudah ada',
+									showConfirmButton: false,
+									timer: 1500
+								})
+							}
+						}
+					})*@
+				}
+			});
 
-        const modalValue = (type) => {
-            if (type === 'clear') {
-                 $('#username').val(null),
-                 $('#email').val(null),
-                   $('#password').val(null) 
-                $('#dtlUsername').val(null);
-                $('#dtlUsernameVal').val(null);
-                $('#dtlEmail').val(null);
-                $('#dtlPassword').val(null);
-                $("#showDtlPassword").prop("checked", false);
-            }
-        }
+			$('#btnReset').on('click', function () {
+				modalValue('clear')
+			}); 
 
-        const getUser = () => {
-            $.ajax({
-                type: "POST",
-                url: "subdist",
-                data: JSON.stringify({
-                    Option: "GET_USER"
-                }),
+			$('#form_username_dtl').submit(function (e) {
+				e.preventDefault();
 
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
-                success: function (res) { 
-                    $('#sel_user').empty()
-                    result = ''
-                    JSON.parse(res).forEach(item => {
-                        result += `<option value="${item.USERNAME}">${item.USERNAME}</option>`
-                    })
-                    $('#sel_user').append('<option value="-1" selected>Pilih User</option>')
-                    $('#sel_user').append(result)
-                }
-            });
-        }
+			});
 
-        const getUserCredential = () => {  
-            let user = $('#sel_user').val();
-            $.ajax({
-                type: "POST",
-                url: "subdist",
-                data: JSON.stringify({
-                    Option: "GET_USER_CREDENTIAL",
-                    Username: user
-                }),
-                dataType: "json",
-                contentType: 'application/json; charset=utf-8',
-                success: function (res) {
-                    let result = JSON.parse(res); 
+			$('#btnDtlClose').click(function (e) {
+				e.preventDefault();
+				$('#form_username_dtl').attr('hidden', 'hidden');
+			});
 
-                    console.log(result)
-                   
-                    $("#showDtlPassword").prop("checked", false);
+			$('#btnShowDetail').click(function (e) {
+				e.preventDefault();  
+				getUserCredential();
+				$('#dtlPassword').attr('type', 'password') 
+			});
 
-                    if (result.length > 0) {
-                        $('#form_username_dtl').removeAttr('hidden');
-                        $('#dtlUsername').val(result[0].USERNAME);
-                        $('#dtlUsernameVal').val(result[0].USERNAME);
-                        $('#dtlEmail').val(result[0].Emails);
-                        $('#dtlPassword').val(result[0].PasswordDesk);
-                    } else {
-                        $('#form_username_dtl').attr('hidden', 'hidden');
-                    }
-                },
-                error: function (ex) {
-                    $('#form_username_dtl').attr('hidden', 'hidden');
-                }
-            });
+			$('#showDtlPassword').click(function (e) {
+				e.preventDefault();
+				if ($('#dtlPassword').attr('type') === 'text') {
+					$('#dtlPassword').attr('type', 'password')
+				} else {
+					$('#dtlPassword').attr('type', 'text')
+				}
+			});
+		}); 
 
-        }
+		const validateForm = (item) => {
+			let res = true;
 
-        
-    </script>
+			if (item.Username.trim() === '') {
+				Swal.fire({
+					position: 'center',
+					icon: 'error',
+					title: 'Username tidak boleh kosong',
+					showConfirmButton: false,
+					timer: 1500
+				})
+				res = false
+				return res
+			}
+			if (item.Email.trim() === '') {
+				Swal.fire({
+					position: 'center',
+					icon: 'error',
+					title: 'Email tidak boleh kosong',
+					showConfirmButton: false,
+					timer: 1500
+				})
+				res = false
+				return res
+			}
+			if (item.Password.trim() === '') {
+				Swal.fire({
+					position: 'center',
+					icon: 'error',
+					title: 'Password tidak boleh kosong',
+					showConfirmButton: false,
+					timer: 1500
+				})
+				res = false
+				return res
+			}
+			return res
+		}
+
+		const modalValue = (type) => {
+			if (type === 'clear') {
+				 $('#username').val(null),
+				 $('#email').val(null),
+				   $('#password').val(null) 
+				$('#dtlUsername').val(null);
+				$('#dtlUsernameVal').val(null);
+				$('#dtlEmail').val(null);
+				$('#dtlPassword').val(null);
+				$("#showDtlPassword").prop("checked", false);
+			}
+		}
+
+		const getUser = () => {
+			$.ajax({
+				type: "POST",
+				url: "subdist",
+				data: JSON.stringify({
+					Option: "GET_USER"
+				}),
+
+				dataType: "json",
+				contentType: 'application/json; charset=utf-8',
+				success: function (res) { 
+					$('#sel_user').empty()
+					result = ''
+					JSON.parse(res).forEach(item => {
+						result += `<option value="${item.USERNAME}">${item.USERNAME}</option>`
+					})
+					$('#sel_user').append('<option value="-1" selected>Pilih User</option>')
+					$('#sel_user').append(result)
+				}
+			});
+		}
+
+		const getUserCredential = () => {  
+			let user = $('#sel_user').val();
+			$.ajax({
+				type: "POST",
+				url: "subdist",
+				data: JSON.stringify({
+					Option: "GET_USER_CREDENTIAL",
+					Username: user
+				}),
+				dataType: "json",
+				contentType: 'application/json; charset=utf-8',
+				success: function (res) {
+					let result = JSON.parse(res); 
+
+					console.log(result)
+				   
+					$("#showDtlPassword").prop("checked", false);
+
+					if (result.length > 0) {
+						$('#form_username_dtl').removeAttr('hidden');
+						$('#dtlUsername').val(result[0].USERNAME);
+						$('#dtlUsernameVal').val(result[0].USERNAME);
+						$('#dtlEmail').val(result[0].Emails);
+						$('#dtlPassword').val(result[0].PasswordDesk);
+					} else {
+						$('#form_username_dtl').attr('hidden', 'hidden');
+					}
+				},
+				error: function (ex) {
+					$('#form_username_dtl').attr('hidden', 'hidden');
+				}
+			});
+
+		}
+
+		
+	</script>
