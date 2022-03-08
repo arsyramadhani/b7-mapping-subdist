@@ -79,6 +79,11 @@ namespace MappingSubdist.Controllers
             }
 
         }
+        public ActionResult ExpenseItem()
+        {
+            return View();
+        }
+    
 
         [Route("login")]
         public ActionResult Login()
@@ -133,6 +138,12 @@ namespace MappingSubdist.Controllers
             var parameters = new DynamicParameters(dictionary);
             return Json(DAL.StoredProcedure(parameters, SP_MAPPING_SUBDIST, SubdistConn)); 
         }
-         
+
+        public ActionResult SimpleQuery(SimpleQueryModel Models, string spname) //untuk query ringan seperti select dan single insert ,update,delete,
+        {
+            var parameters = new DynamicParameters(Models.SimpleModel);
+            return Json(DAL.StoredProcedure(parameters, SP_MAPPING_SUBDIST, SubdistConn));
+
+        }
     }
 }

@@ -88,27 +88,27 @@ namespace MappingSubdist.Controllers
                 //Call the LogonUser function to obtain a handle to an access token.
                 bool returnValue = LogonUser(UserName, MachineName, Pwd, LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT, ref tokenHandle);
 
-                if (returnValue == false)
-                {
-                    int ret = Marshal.GetLastWin32Error();
-                    if (ret == 1329)
-                    {
-                        System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
-                    }
-                    else
-                    {
-                        System.Web.HttpContext.Current.Session["USERNAME"] = model.Username;
-                        System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
-                     }
-                }
-                else
-                {
+                //if (returnValue == false)
+                //{
+                //    int ret = Marshal.GetLastWin32Error();
+                //    if (ret == 1329)
+                //    {
+                //        System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
+                //    }
+                //    else
+                //    {
+                //        System.Web.HttpContext.Current.Session["USERNAME"] = model.Username;
+                //        System.Web.HttpContext.Current.Session["ISLOGIN"] = false;
+                //     }
+                //}
+                //else
+                //{
                     System.Web.HttpContext.Current.Session["ISLOGIN"] = true;  
                     System.Web.HttpContext.Current.Session["USERNAME"] = dt.Rows[0]["USERNAME"].ToString();
                     System.Web.HttpContext.Current.Session["NIK"] = dt.Rows[0]["NIK"].ToString();
                     System.Web.HttpContext.Current.Session["JOBTTLNAME"] = dt.Rows[0]["JOBTTLNAME"].ToString();
                     System.Web.HttpContext.Current.Session["EMAIL"] = dt.Rows[0]["EMAIL"].ToString();
-                }
+                //}
             }
             else
             {

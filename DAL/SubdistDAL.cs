@@ -34,6 +34,5 @@ namespace MappingSubdist.DAL
                 return JsonConvert.SerializeObject(ex);
             } 
         }
-  
     }
 }
