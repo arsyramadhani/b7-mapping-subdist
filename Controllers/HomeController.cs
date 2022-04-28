@@ -87,6 +87,12 @@ namespace MappingSubdist.Controllers
 
 
         }
+
+        [Route("CreateSubdist")]
+        public ActionResult CreateSubdist()
+        {
+            return View();
+        }
         #endregion
 
         #region RedirectView
@@ -113,6 +119,12 @@ namespace MappingSubdist.Controllers
         public ActionResult RedirectLogin()
         { 
             return RedirectToAction("Login");
+        }
+
+        [Route("home/CreateSubdist")]
+        public ActionResult RedirectCreateSubdist()
+        {
+            return RedirectToAction("CreateSubdist");
         }
         #endregion
 

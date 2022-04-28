@@ -1,0 +1,171 @@
+﻿
+@{
+    ViewBag.Title = "Create Subdist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="col-md-12">
+        <h3><b>@ViewBag.Title</b></h3>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Add New Subdist</h4>
+                <br />
+                <form id="form_subdist" action="#">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Kode Subdist</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_code" class="form-control" placeholder="Masukkan kode subdist">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Nama Subdist</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_name" class="form-control" placeholder="Masukkan nama subdist">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Pilih Regional</label>
+                        <div class="col-sm-4">
+                            <select id="sel_region">
+                                <option>Pilih Region</option>
+                                <option value="R1">REGION 1</option>
+                                <option value="R2">REGION 2</option>
+                                <option value="R3">REGION 3</option>
+                                <option value="R4">REGION 4</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Cabang</label>
+                        <div class="col-sm-4">
+                            <select id="sel_Cabang" name="Cabang">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Group</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_group" class="form-control" placeholder="Masukkan nama group">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Grouping SPB</label>
+                        <div class="col-sm-4">
+                            <label style="font-weight: normal"><input style="vertical-align: middle; position: relative; margin-right: 0.5em" type="checkbox" id="groupingSPB" class="form-control-sm">Is grouping?</label>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="grouping_spb_true" style="display: none">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-4">
+                            <label style="font-weight: normal"><input style="vertical-align: middle; position: relative; margin-right: 0.5em" type="checkbox" id="groupingSPB_new" class="form-control-sm">New group</label>
+                            <input style="display: none" type="text" id="subdit_grouping_spb" class="form-control" placeholder="Masukkan nama grup SPB">
+                            <div id="select_spb">
+                                <select id="sel_GroupSPB" name="groupSPB">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">PIC</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_pic" class="form-control" placeholder="Masukkan nama PIC">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">NPWP</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_npwp" class="form-control" placeholder="Masukkan NPWP">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Alamat</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_address" class="form-control" placeholder="Masukkan alamat subdist">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-primary btn-md " id="btnSubmit" style="background-color:darkcyan;color:white;">Save</button>
+                            <button class="btn btn-primary btn-md " id="btnReset" style="background-color:dimgrey;color:white;">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr />
+
+
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/sweetalert2.all.min.js"></script>
+<script src="~/Scripts/select2.min.js"></script>
+
+<script>
+    $('#sel_region').select2({
+        minimumResultsForSearch: Infinity
+    });
+
+    $('#sel_region').on('select2:select', function (e) {
+        var data = e.params.data.id;
+        getCabangByRegion(data)
+    });
+
+    $('#sel_Cabang').select2({
+        placeholder: 'Pilih cabang...'
+    });
+
+    $('#sel_GroupSPB').select2({
+        placeholder: 'Pilih group SPB...'
+    });
+
+    const getCabangByRegion = (kodeRegion) => {
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_CABANG",
+                Region: kodeRegion
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                $('#sel_Cabang').empty()
+                result = ''
+                JSON.parse(res).forEach(item => {
+                    result += `<option value="${item.cabang}">${item.namacabang}</option>`
+                })
+                $('#sel_Cabang').append('<option></option>')
+                $('#sel_Cabang').append(result)
+            }
+        });
+    }
+
+    @*const insertSubdist = () => {
+        $.ajax({
+            type: "post",
+            url: "subdist",
+            data: JSON.stringify({
+
+            })
+        })
+    }*@
+
+    
+    $(document).ready(function () {
+        // cek checkbox isgrouping
+        $('#groupingSPB').change(function () {
+            $('#grouping_spb_true').toggle();
+        })
+
+        $('#groupingSPB_new').change(function () {
+            $('#subdit_grouping_spb').toggle();
+            $('#select_spb').toggle();
+        })
+    })
+   
+</script>
