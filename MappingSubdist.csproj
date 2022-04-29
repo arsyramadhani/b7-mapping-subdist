@@ -130,11 +130,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-<<<<<<< Updated upstream
-=======
     <Compile Include="Models\InsertSubdistModel.cs" />
     <Compile Include="Models\SimpleQueryModel.cs" />
->>>>>>> Stashed changes
     <Compile Include="Models\SubdistModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts\LogicScript\DAL.cs" />
@@ -1109,11 +1106,8 @@
     <Content Include="Views\Home\CreateUser.cshtml" />
     <Content Include="Views\Home\MappingUser.cshtml" />
     <Content Include="Views\Home\MappingEmail.cshtml" />
-<<<<<<< Updated upstream
-=======
     <Content Include="Views\Home\ExpenseItem.cshtml" />
-    <Content Include="Views\Home\CreateSubdist.cshtml" />
->>>>>>> Stashed changes
+    <Content Include="Views\Home\InsertSubdist.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

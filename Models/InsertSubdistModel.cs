@@ -7,6 +7,7 @@ namespace MappingSubdist.Models
 {
     public class InsertSubdistModel
     {
+        public string Option { get; set; }
         public string KodeSubdist { get; set; }
         public string NamaSubdist { get; set; }
         public string Region { get; set; }

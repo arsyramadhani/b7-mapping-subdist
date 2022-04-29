@@ -241,8 +241,6 @@ D:\DEV\b7-mapping-subdist\obj\Debug\MappingSubdist.csproj.CopyComplete
 D:\DEV\b7-mapping-subdist\obj\Debug\MappingSubdist.dll
 D:\DEV\b7-mapping-subdist\obj\Debug\MappingSubdist.pdb
 D:\Dev\b7-mapping-subdist\obj\Debug\MappingSubdist.csprojAssemblyReference.cache
-<<<<<<< Updated upstream
-=======
 D:\ProjectSource\2022\CMSDFIS\bin\MappingSubdist.dll.config
 D:\ProjectSource\2022\CMSDFIS\bin\MappingSubdist.dll
 D:\ProjectSource\2022\CMSDFIS\bin\MappingSubdist.pdb
@@ -404,4 +402,3 @@ C:\Users\A Keep\Documents\KAMPUS\MAGANG\DFIS\obj\Debug\MappingSubdist.csproj.Cor
 C:\Users\A Keep\Documents\KAMPUS\MAGANG\DFIS\obj\Debug\MappingSubdist.csproj.CopyComplete
 C:\Users\A Keep\Documents\KAMPUS\MAGANG\DFIS\obj\Debug\MappingSubdist.dll
 C:\Users\A Keep\Documents\KAMPUS\MAGANG\DFIS\obj\Debug\MappingSubdist.pdb
->>>>>>> Stashed changes

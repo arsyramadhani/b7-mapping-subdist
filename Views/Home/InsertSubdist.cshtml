@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Create Subdist";
+    ViewBag.Title = "Tambah Subdist";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,7 +10,7 @@
         <hr />
         <div class="row">
             <div class="col-md-12">
-                <h4>Add New Subdist</h4>
+                <h4>Tambah Subdist Baru</h4>
                 <br />
                 <form id="form_subdist" action="#">
                     <div class="form-group row">
@@ -145,18 +145,55 @@
         });
     }
 
-    @*const insertSubdist = () => {
+    const getDistinctGroupingSPB = () => {
         $.ajax({
             type: "post",
             url: "subdist",
             data: JSON.stringify({
+                OPTION: "GET_GROUPING_SPB"
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (spb) {
+                $('#sel_GroupSPB').empty();
+                result = ''
+                JSON.parse(spb).forEach(item => {
+                    result += `<option value="${item.GroupingSPB}">${item.GroupingSPB}</option>`
+                });
+                $('#sel_GroupSPB').append('<option></option>');
+                $('#sel_GroupSPB').append(result);
+            }
+        });
+    }
 
-            })
+    const insertSubdist = (group) => {
+        $.ajax({
+            type: "post",
+            url: "insert_subdist",
+            data: JSON.stringify({
+                OPTION: "INSERT_SUBDIST",
+                KODESUBDIST: $('#subdit_code').val(),
+                NAMASUBDIST: $('#subdit_name').val(),
+                REGION: $('#sel_region').val(),
+                CABANG: $('#sel_Cabang option:selected').text(),
+                GROUP: $('#subdit_group').val(),
+                PIC: $('#subdit_pic').val(),
+                NPWP: $('#subdit_npwp').val(),
+                ALAMAT: $('#subdit_alamat').val(),
+                GROUPDESC: $('#subdit_name').val(),
+                GROUPSPB: group
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function () {
+
+            }
         })
-    }*@
-
+    }
     
     $(document).ready(function () {
+        getDistinctGroupingSPB();
+
         // cek checkbox isgrouping
         $('#groupingSPB').change(function () {
             $('#grouping_spb_true').toggle();
@@ -165,6 +202,22 @@
         $('#groupingSPB_new').change(function () {
             $('#subdit_grouping_spb').toggle();
             $('#select_spb').toggle();
+        })
+
+        $('#btnSubmit').on('click', function () {
+            var groupSPB;
+            if (!$('#groupingSPB').is(':checked')) {
+                groupSPB = $('#subdit_group').val();
+                insertSubdist(groupSPB);
+            } else {
+                if ($('#groupingSPB_new').is(':checked')) {
+                    groupSPB = $('#subdit_grouping_spb').val();
+                    insertSubdist(groupSPB);
+                } else {
+                    groupSPB = $('#sel_GroupSPB').val();
+                    insertSubdist(groupSPB);
+                }
+            }
         })
     })
    

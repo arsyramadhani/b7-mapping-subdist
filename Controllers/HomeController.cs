@@ -88,8 +88,8 @@ namespace MappingSubdist.Controllers
 
         }
 
-        [Route("CreateSubdist")]
-        public ActionResult CreateSubdist()
+        [Route("InsertSubdist")]
+        public ActionResult InsertSubdist()
         {
             return View();
         }
@@ -121,10 +121,10 @@ namespace MappingSubdist.Controllers
             return RedirectToAction("Login");
         }
 
-        [Route("home/CreateSubdist")]
+        [Route("home/InsertSubdist")]
         public ActionResult RedirectCreateSubdist()
         {
-            return RedirectToAction("CreateSubdist");
+            return RedirectToAction("InsertSubdist");
         }
         #endregion
 
@@ -146,5 +146,26 @@ namespace MappingSubdist.Controllers
             return Json(DAL.StoredProcedure(parameters, SP_MAPPING_SUBDIST, SubdistConn)); 
         }
          
+        [Route("insert_subdist")]
+        public ActionResult InsertSubdist(InsertSubdistModel model)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "OPTION", model.Option },
+                { "KODESUBDIST", model.KodeSubdist },
+                { "NAMASUBDIST", model.NamaSubdist },
+                { "REGIONAL", model.Region },
+                { "CABANG", model.Cabang },
+                { "GROUP", model.Group },
+                { "PIC", model.PIC },
+                { "NPWP", model.NPWP },
+                { "ALAMAT", model.Alamat },
+                { "GROUPDESC", model.GroupDesc },
+                { "GROUPSPB", model.GroupSPB }
+            };
+
+            var param = new DynamicParameters(dict);
+            return Json(DAL.StoredProcedure(param, SP_MAPPING_SUBDIST, SubdistConn));
+        }
     }
 }
