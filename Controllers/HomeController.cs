@@ -13,10 +13,10 @@ namespace MappingSubdist.Controllers
 {
     public class HomeController : Controller
     {
-        readonly string conString = ConfigurationManager.ConnectionStrings["RESERVE_DISCOUNT"].ConnectionString; 
+        readonly string conString = ConfigurationManager.ConnectionStrings["RESERVE_DISCOUNT"].ConnectionString;
         readonly SubdistDAL DAL = new SubdistDAL();
 
-        readonly string SP_MAPPING_SUBDIST = "[DBO].[SP_MAPPING_SUBDIST]"; 
+        readonly string SP_MAPPING_SUBDIST = "[DBO].[SP_MAPPING_SUBDIST]";
         readonly string SubdistConn = "RESERVE_DISCOUNT";
 
         #region View
@@ -29,11 +29,11 @@ namespace MappingSubdist.Controllers
             }
             else
             {
-            return View();
+                return View();
 
             }
 
-        } 
+        }
 
         [Route("CreateUser")]
         public ActionResult CreateUser()
@@ -44,7 +44,7 @@ namespace MappingSubdist.Controllers
             }
             else
             {
-            return View("CreateUser");
+                return View("CreateUser");
 
             }
 
@@ -59,7 +59,7 @@ namespace MappingSubdist.Controllers
             }
             else
             {
-            return View("MappingEmail");
+                return View("MappingEmail");
 
             }
 
@@ -74,7 +74,7 @@ namespace MappingSubdist.Controllers
             }
             else
             {
-            return View("MappingUser");
+                return View("MappingUser");
 
             }
 
@@ -90,6 +90,12 @@ namespace MappingSubdist.Controllers
 
         [Route("InsertSubdist")]
         public ActionResult InsertSubdist()
+        {
+            return View();
+        }
+
+        [Route("MappingSubdist")]
+        public ActionResult MappingSubdist()
         {
             return View();
         }
@@ -126,6 +132,12 @@ namespace MappingSubdist.Controllers
         {
             return RedirectToAction("InsertSubdist");
         }
+
+        [Route("home/MappingSubdist")]
+        public ActionResult RedirectMappingSubdist()
+        {
+            return RedirectToAction("MappingSubdist");
+        }
         #endregion
 
 
@@ -138,6 +150,8 @@ namespace MappingSubdist.Controllers
                  { "CABANG", subdistModel.KodeCabang },
                  { "REGIONAL", subdistModel.Region },
                  { "KODESUBDIST", subdistModel.KodeSubdist },
+                 { "NAMASUBDIST", subdistModel.NamaSubdist },
+                 { "GROUPSPB", subdistModel.GroupSPB },
                  { "USERNAME", subdistModel.Username },
                  { "EMAIL", subdistModel.Email },
                  { "PASSWORD", subdistModel.Password }

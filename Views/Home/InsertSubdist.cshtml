@@ -175,7 +175,7 @@
                 KODESUBDIST: $('#subdit_code').val(),
                 NAMASUBDIST: $('#subdit_name').val(),
                 REGION: $('#sel_region').val(),
-                CABANG: $('#sel_Cabang option:selected').text(),
+                CABANG: $('#sel_Cabang option:selected').val(),
                 GROUP: $('#subdit_group').val(),
                 PIC: $('#subdit_pic').val(),
                 NPWP: $('#subdit_npwp').val(),
@@ -185,8 +185,26 @@
             }),
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
-            success: function () {
-
+            success: function (res) {
+                let result = JSON.parse(res)[0].RESULT
+                if (result === 'true') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Subdist baru berhasil ditambahkan',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    $('#btnClose').trigger('click');
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Gagal menambahkan subdist',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
             }
         })
     }
@@ -206,10 +224,14 @@
 
         $('#btnSubmit').on('click', function () {
             var groupSPB;
+
+            // cek usernya mau bikin grouping spb atau nggak
             if (!$('#groupingSPB').is(':checked')) {
                 groupSPB = $('#subdit_group').val();
                 insertSubdist(groupSPB);
             } else {
+
+                // cek usernya apa grouping spb nya mau buat baru atau ngambil dari spb lain
                 if ($('#groupingSPB_new').is(':checked')) {
                     groupSPB = $('#subdit_grouping_spb').val();
                     insertSubdist(groupSPB);
