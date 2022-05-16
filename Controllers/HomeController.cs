@@ -4,10 +4,14 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.IO;
 using Dapper;
 using Newtonsoft.Json;
 using MappingSubdist.DAL;
 using MappingSubdist.Models;
+using System.Data.OleDb;
+using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace MappingSubdist.Controllers
 {
@@ -17,6 +21,7 @@ namespace MappingSubdist.Controllers
         readonly SubdistDAL DAL = new SubdistDAL();
 
         readonly string SP_MAPPING_SUBDIST = "[DBO].[SP_MAPPING_SUBDIST]";
+        readonly string SP_INJECT_QP = "[DBO].[SP_INJECT_QP]";
         readonly string SubdistConn = "RESERVE_DISCOUNT";
 
         #region View
@@ -99,6 +104,12 @@ namespace MappingSubdist.Controllers
         {
             return View();
         }
+
+        [Route("InjectQP")]
+        public ActionResult InjectQP()
+        {
+            return View();
+        }
         #endregion
 
         #region RedirectView
@@ -137,6 +148,12 @@ namespace MappingSubdist.Controllers
         public ActionResult RedirectMappingSubdist()
         {
             return RedirectToAction("MappingSubdist");
+        }
+
+        [Route("home/InjectQP")]
+        public ActionResult RedirectInjectQP()
+        {
+            return RedirectToAction("InjectQP");
         }
         #endregion
 
@@ -181,5 +198,71 @@ namespace MappingSubdist.Controllers
             var param = new DynamicParameters(dict);
             return Json(DAL.StoredProcedure(param, SP_MAPPING_SUBDIST, SubdistConn));
         }
+
+        [Route("QPOperation")]
+        public ActionResult QPOperation(QPModel model)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "OPTION", model.Option },
+                { "MEMO", model.Memo },
+                { "REMARKS", model.Remarks }
+            };
+
+            var param = new DynamicParameters(dict);
+            return Json(DAL.StoredProcedure(param, SP_INJECT_QP, SubdistConn));
+        }
+
+        public void injectQP(string path, string name)
+        {
+            string excelConnString = String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0\"", path);
+
+            using (SqlConnection con = new SqlConnection(conString))
+            {
+                con.Open();
+                // Delete old entries
+                SqlCommand truncate = new SqlCommand("TRUNCATE TABLE temp_InjectQP", con);
+                truncate.ExecuteNonQuery();
+                con.Close();
+            }
+
+            using (OleDbConnection excelConnection = new OleDbConnection(excelConnString))
+            {
+                using (OleDbCommand cmd = new OleDbCommand("Select [SITE_USE_ID],[NAMALANG],[SALES HNA],[QP] from [RECAP$] WHERE [SITE_USE_ID] IS NOT NULL", excelConnection))
+                {
+                    excelConnection.Open();
+                    using (OleDbDataReader dReader = cmd.ExecuteReader())
+                    {
+                        using (SqlBulkCopy sqlBulk = new SqlBulkCopy(conString))
+                        {
+                            //Give your Destination table name 
+                            sqlBulk.DestinationTableName = "temp_InjectQP";
+                            sqlBulk.WriteToServer(dReader);
+                        }
+                    }
+                }
+            }
+        }
+
+        [Route("fileUpload")]
+        public string fileUpload()
+        {
+            Regex rgx = new Regex("[^a-zA-Z0-9]");
+            string status;
+
+            var file = Request.Files[0];
+            var fileName = rgx.Replace(Path.GetFileName(file.FileName), "");
+            var fileNameWithoutExt = rgx.Replace(Path.GetFileNameWithoutExtension(file.FileName), "");
+
+            string folder = ("~/Content/fileQP");
+            var excelPath = Path.Combine(Server.MapPath(folder), fileName);
+            file.SaveAs(excelPath);
+
+            injectQP(excelPath, fileName);
+
+            return fileName;
+        }
+
+        
     }
 }
