@@ -184,17 +184,7 @@
                         showConfirmButton: false,
                         timer: 1500
                     }).then(function () {
-                        Swal.fire({
-                            title: 'Memvalidasi data',
-                            text: 'Please wait...',
-                            icon: 'success',
-                            timer: 2500,
-                            timerProgressBar: true,
-                            buttons: false,
-                            showConfirmButton: false
-                        }).then(() => {
-                            checkNewSubdist();
-                        })
+                        matchKodeSubdist();
                     })
                     $('#btnClose').trigger('click');
                 } else {
@@ -229,7 +219,7 @@
                         showConfirmButton: false,
                         timer: 1500
                     }).then(function () {
-                        window.open("/insertsubdist");
+                        window.open("/insertsubdist?status=" + result);
                     })
                     $('#btnClose').trigger('click');
                 } else {
@@ -240,7 +230,7 @@
                         showConfirmButton: false,
                         timer: 2500
                     }).then(function () {
-                        matchKodeSubdist();
+                        copyToTransaction();
                     })
                 }
             }
@@ -303,36 +293,19 @@
                     }).then(function () {
                         insertToMasterSaldo();
                         $('#btnUpdate').trigger('click');
-                        location.reload();
+
+                        Swal.fire({
+                            title: 'Memuat ulang...',
+                            icon: 'success',
+                            timer: 1000,
+                            timerProgressBar: true,
+                            buttons: false,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        })         
                     })
                     $('#btnClose').trigger('click');
-                } else {
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'error',
-                        title: 'Terdapat kesalahan data, mohon periksa kembali',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            }
-        })
-    }
-
-    const backupMonthly = () => {
-        $.ajax({
-            type: 'post',
-            url: 'QPOperation',
-            data: JSON.stringify({
-                OPTION: "CREATE_TEMP_MONTHLY_MQP"
-                
-            }),
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            success: function (res) {
-                let result = JSON.parse(res)[0].RESULT
-                if (result === 'true') {
-                    insertToMasterSaldo();
                 } else {
                     Swal.fire({
                         position: 'center',
@@ -375,21 +348,34 @@
 
     $(document).ready(function () {
         $('#btnUpload').on('click', function () {
-            uploadFile();
-
             Swal.fire({
-                title: 'Upload Success',
-                text: 'Please wait...',
-                icon: 'success',
-                timer: 5000,
-                timerProgressBar: true,
-                buttons: false,
-                showConfirmButton: false
-            }).then(() => {
-                loadTempQP();
-                document.getElementById("warning").style.display = "inline";
-                getTotalSum();
-                document.getElementById("btnSubmit").style.display = "inline";
+                title: 'Ingin mengupload excel tersebut?',
+                text: 'Pastikan file tersebut sudah benar',
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    uploadFile();
+
+                    Swal.fire({
+                        title: 'Upload Success',
+                        text: 'Silahkan tunggu...',
+                        icon: 'success',
+                        timer: 5000,
+                        timerProgressBar: true,
+                        buttons: false,
+                        showConfirmButton: false
+                    }).then(() => {
+                        loadTempQP();
+                        document.getElementById("warning").style.display = "inline";
+                        getTotalSum();
+                        document.getElementById("btnSubmit").style.display = "inline";
+                    })
+                } else if (result.isDenied) {
+                    Swal.fire('Tindakan dibatalkan', '', 'info')
+                }
             })
         })
 
@@ -402,7 +388,17 @@
                 denyButtonText: 'No'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    copyToTransaction();
+                    Swal.fire({
+                        title: 'Memvalidasi data',
+                        text: 'Please wait...',
+                        icon: 'success',
+                        timer: 2500,
+                        timerProgressBar: true,
+                        buttons: false,
+                        showConfirmButton: false
+                    }).then(() => {
+                        checkNewSubdist();
+                    })
                 } else if (result.isDenied) {
                     Swal.fire('Tindakan dibatalkan', '', 'info')
                 }
