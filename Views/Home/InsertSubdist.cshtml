@@ -32,8 +32,10 @@
                         <label class="col-sm-2 col-form-label">Kode Subdist</label>
                         <div class="col-sm-4">
                             <input type="text" id="subdit_code" class="form-control" placeholder="Masukkan kode subdist" autocomplete="off">
-                            <button class="btn btn-primary btn-md " id="btnCheck" type="button" style="background-color:darkcyan;color:white; float: right">Check subdist</button>
                             <p style="color:red; margin-top: 2%; margin-bottom: 1%; display: none" id="errKode">Kode tersebut sudah terdaftar di dalam sistem</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary btn-md " id="btnCheck" type="button" style="background-color:darkcyan;color:white; float: right">Check subdist</button>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -248,6 +250,7 @@
     const checkKodeSubdist = (kode) => {
         alert('kode luar ajax: ' + kode);
         $.ajax({
+            async: false,
             type: "post",
             url: "subdist",
             data: JSON.stringify({
@@ -406,6 +409,7 @@
                 $('#sel_region').prop('disabled', true);
                 $('#sel_Cabang').prop('disabled', true);
                 $('#subdit_group').prop('disabled', true);
+                $('#groupingSPB').prop('disabled', true);
                 $('#grouping_spb').prop('disabled', true);
                 $('#subdit_pic').prop('disabled', true);
                 $('#subdit_npwp').prop('disabled', true);
@@ -416,6 +420,7 @@
                 $('#sel_region').removeAttr('disabled');
                 $('#sel_Cabang').removeAttr('disabled');
                 $('#subdit_group').removeAttr('disabled');
+                $('#groupingSPB').removeAttr('disabled');
                 $('#grouping_spb').removeAttr('disabled');
                 $('#subdit_pic').removeAttr('disabled');
                 $('#subdit_npwp').removeAttr('disabled');
