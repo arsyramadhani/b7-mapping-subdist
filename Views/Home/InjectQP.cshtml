@@ -95,8 +95,33 @@
             type: 'post',
             url: 'fileUpload',
             data: formData,
-            success: function (file) {
-                console.log(file);
+            success: function (status) {
+                if (status == 'False') {
+                    Swal.fire({
+                        title: 'Upload Gagal',
+                        text: 'Terdapat kesalahan format Excel yang diupload, silahkan upload ulang file yang benar',
+                        icon: 'error',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        buttons: false,
+                        showConfirmButton: false
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Upload Success',
+                        text: 'Silahkan tunggu...',
+                        icon: 'success',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        buttons: false,
+                        showConfirmButton: false
+                    }).then(() => {
+                        loadTempQP();
+                        document.getElementById("warning").style.display = "inline";
+                        getTotalSum();
+                        document.getElementById("btnSubmit").style.display = "inline";
+                    })
+                }
             },
             processData: false,
             contentType: false,
@@ -358,21 +383,18 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     uploadFile();
-
                     Swal.fire({
-                        title: 'Upload Success',
+                        title: 'Memproses File',
                         text: 'Silahkan tunggu...',
                         icon: 'success',
-                        timer: 5000,
+                        timer: 6000,
                         timerProgressBar: true,
                         buttons: false,
                         showConfirmButton: false
-                    }).then(() => {
-                        loadTempQP();
-                        document.getElementById("warning").style.display = "inline";
-                        getTotalSum();
-                        document.getElementById("btnSubmit").style.display = "inline";
+                    }).then(function () {
+
                     })
+                     
                 } else if (result.isDenied) {
                     Swal.fire('Tindakan dibatalkan', '', 'info')
                 }

@@ -213,7 +213,7 @@ namespace MappingSubdist.Controllers
             return Json(DAL.StoredProcedure(param, SP_INJECT_QP, SubdistConn));
         }
 
-        public void injectQP(string path, string name)
+        public bool injectQP(string path, string name)
         {
             string excelConnString = String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0\"", path);
 
@@ -226,29 +226,35 @@ namespace MappingSubdist.Controllers
                 con.Close();
             }
 
-            using (OleDbConnection excelConnection = new OleDbConnection(excelConnString))
+            try
             {
-                using (OleDbCommand cmd = new OleDbCommand("Select [SITE_USE_ID],[NAMALANG],[SALES HNA],[QP] from [RECAP$] WHERE [SITE_USE_ID] IS NOT NULL", excelConnection))
+                using (OleDbConnection excelConnection = new OleDbConnection(excelConnString))
                 {
-                    excelConnection.Open();
-                    using (OleDbDataReader dReader = cmd.ExecuteReader())
+                    using (OleDbCommand cmd = new OleDbCommand("Select [SITE_USE_ID],[NAMALANG],[SALES HNA],[QP] from [RECAP$] WHERE [SITE_USE_ID] IS NOT NULL", excelConnection))
                     {
-                        using (SqlBulkCopy sqlBulk = new SqlBulkCopy(conString))
+                        excelConnection.Open();
+                        using (OleDbDataReader dReader = cmd.ExecuteReader())
                         {
-                            //Give your Destination table name 
-                            sqlBulk.DestinationTableName = "temp_InjectQP";
-                            sqlBulk.WriteToServer(dReader);
+                            using (SqlBulkCopy sqlBulk = new SqlBulkCopy(conString))
+                            {
+                                //Give your Destination table name 
+                                sqlBulk.DestinationTableName = "temp_InjectQP";
+                                sqlBulk.WriteToServer(dReader);
+                            }
                         }
                     }
                 }
+            } catch (Exception e)
+            {
+                return false;
             }
+            return true;
         }
 
         [Route("fileUpload")]
-        public string fileUpload()
+        public bool fileUpload()
         {
             Regex rgx = new Regex("[^a-zA-Z0-9]");
-            string status;
 
             var file = Request.Files[0];
             var fileName = rgx.Replace(Path.GetFileName(file.FileName), "");
@@ -258,11 +264,9 @@ namespace MappingSubdist.Controllers
             var excelPath = Path.Combine(Server.MapPath(folder), fileName);
             file.SaveAs(excelPath);
 
-            injectQP(excelPath, fileName);
+            var status = injectQP(excelPath, fileName);
 
-            return fileName;
-        }
-
-        
+            return status;
+        } 
     }
 }
