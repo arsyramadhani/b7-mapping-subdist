@@ -11,6 +11,8 @@ namespace MappingSubdist.Models
 		public string Option { set; get; } 
 		public string KodeCabang { set; get; } 
 		public string KodeSubdist { set; get; } 
+		public string NamaSubdist { get; set; }
+		public string GroupSPB { get; set; }
 		public string Region { set; get; } 
 		public string Username { set; get; } 
 		public string Password { set; get; } 

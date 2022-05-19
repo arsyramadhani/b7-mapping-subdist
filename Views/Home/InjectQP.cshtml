@@ -1,0 +1,434 @@
+﻿
+@{
+    ViewBag.Title = "Inject QP";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="col-md-12">
+        <h3><b>@ViewBag.Title</b></h3>
+        <hr />
+    </div>
+    <div class="col-md-12">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Upload File Excel</label>
+            <div class="col-sm-4">
+                <input type="file" class="form-control-file" id="fileUpload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-4">
+                <button class="btn btn-primary btn-md " id="btnUpload" type="button" style="background-color:darkcyan;color:white;">Upload</button>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="col-md-12">
+        <h3 id="warning" style="color:red; display:none; margin-bottom:15px;">PASTIKAN DATA BERIKUT TELAH SESUAI SEBELUM KLIK SUBMIT</h3>
+        <table id="tblQPTotal" class="table table-striped table-bordered zero-configuration" style="width:100%;">
+            <thead>
+                <tr>
+                    <th width="15%">Total HNA</th>
+                    <th width="15%">Total QP</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div class="col-md-12">
+        <table id="tblQPOverview" class="table table-striped table-bordered zero-configuration" style="width:100%;">
+            <thead>
+                <tr>
+                    <th width="5%">No</th>
+                    <th width="10%">Kode Subdist</th>
+                    <th width="25%">Nama Subdist</th>
+                    <th width="15%">HNA</th>
+                    <th width="15%">QP</th>
+                </tr>
+            </thead>
+        </table>
+        <button class="btn btn-primary btn-md " id="btnSubmit" type="button" style="background-color:darkcyan; color:white; display:none">Submit</button>
+    </div>
+</div>
+<button class="btn btn-success waves-effect waves-light" id="btnUpdate" data-toggle='modal' data-target='#myModal' hidden>Update Data</button>
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Input Info Tambahan</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" action="#">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="memo_no">No. Memo</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="memo_no" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="remarks">Remarks</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="remarks" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary waves-effect waves-light" id="btnSave">Simpan</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/sweetalert2.all.min.js"></script>
+<script src="~/Scripts/select2.min.js"></script>
+<script src="~/Scripts/jquery.dataTables.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+
+<script>
+    const uploadFile = () => {
+        var formData = new FormData();
+        formData.append('file', $('#fileUpload')[0].files[0]);
+
+        $.ajax({
+            type: 'post',
+            url: 'fileUpload',
+            data: formData,
+            success: function (status) {
+                if (status == 'False') {
+                    Swal.fire({
+                        title: 'Upload Gagal',
+                        text: 'Terdapat kesalahan format Excel yang diupload, silahkan upload ulang file yang benar',
+                        icon: 'error',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        buttons: false,
+                        showConfirmButton: false
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Upload Success',
+                        text: 'Silahkan tunggu...',
+                        icon: 'success',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        buttons: false,
+                        showConfirmButton: false
+                    }).then(() => {
+                        loadTempQP();
+                        document.getElementById("warning").style.display = "inline";
+                        getTotalSum();
+                        document.getElementById("btnSubmit").style.display = "inline";
+                    })
+                }
+            },
+            processData: false,
+            contentType: false,
+            error: function () {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Gagal mengupload data tersebut',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        })
+    }
+
+    const loadTempQP = () => {
+        var table = $('#tblQPOverview').DataTable();
+        table.destroy();
+        $.ajax({
+            type: 'post',
+            url: 'QPOperation',
+            data: JSON.stringify({
+                OPTION: "GET_TEMP_QP"
+            }),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                $('#tblQPOverview').DataTable({
+                    "data": JSON.parse(res),
+                    "lengthChange": true,
+                    "searching": true,
+                    "columns": [
+                        { "data": "row_num" },
+                        { "data": "F1" },
+                        { "data": "F2" },
+                        { "data": "F3" },
+                        { "data": "F4" }
+                    ]
+                })
+            }
+        });
+    }
+
+    const getTotalSum = () => {
+        var table = $('#tblQPTotal').DataTable();
+        table.destroy();
+        $.ajax({
+            type: 'post',
+            url: 'QPOperation',
+            data: JSON.stringify({
+                OPTION: "GET_TOTAL_SUM"
+            }),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                $('#tblQPTotal').DataTable({
+                    "data": JSON.parse(res),
+                    "lengthChange": false,
+                    "searching": false,
+                    "columns": [
+                        { "data": "TotalHNA" },
+                        { "data": "TotalQP" }
+                    ]
+                })
+            }
+        });
+    }
+
+    const copyToTransaction = () => {
+        $.ajax({
+            type: 'post',
+            url: 'QPOperation',
+            data: JSON.stringify({
+                OPTION: "GENERATE_AND_COPY"
+            }),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                let result = JSON.parse(res)[0].RESULT
+                if (result === 'true') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Berhasil memasukkan data ke tabel transaksi',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        matchKodeSubdist();
+                    })
+                    $('#btnClose').trigger('click');
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Gagal memasukkan data',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            }
+        })
+    }
+
+    const checkNewSubdist = () => {
+        $.ajax({
+            type: 'post',
+            url: 'QPOperation',
+            data: JSON.stringify({
+                OPTION: "CHECK_NEW_SUBDIST"
+            }),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                let result = JSON.parse(res)[0].RESULT
+                if (result === 'true') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Terdapat subdist yang belum terdaftar di sistem',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.open("/insertsubdist?status=" + result);
+                    })
+                    $('#btnClose').trigger('click');
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Semua data sudah benar, memproses lebih lanjut...',
+                        showConfirmButton: false,
+                        timer: 2500
+                    }).then(function () {
+                        copyToTransaction();
+                    })
+                }
+            }
+        })
+    }
+
+    const matchKodeSubdist = () => {
+        $.ajax({
+            type: 'post',
+            url: 'QPOperation',
+            data: JSON.stringify({
+                OPTION: "MATCH_KODESUBDIST"
+            }),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                let result = JSON.parse(res)[0].RESULT
+                if (result === 'true') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Semua data berhasil di proses, terima kasih',
+                        showConfirmButton: true
+                    }).then(function () {
+                        $('#btnUpdate').trigger('click');
+                    })
+                    $('#btnClose').trigger('click');
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Terdapat kesalahan data, mohon periksa kembali',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            }
+        })
+    }
+
+    const insertToSaldoMQP = () => {
+        $.ajax({
+            type: 'post',
+            url: 'QPOperation',
+            data: JSON.stringify({
+                OPTION: "INSERT_TO_SALDOMQP",
+                MEMO: $('#memo_no').val(),
+                REMARKS: $('#remarks').val()
+            }),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                let result = JSON.parse(res)[0].RESULT
+                if (result === 'true') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Data berhasil dimasukkan ke dalam Saldo MQP',
+                        showConfirmButton: true
+                    }).then(function () {
+                        insertToMasterSaldo();
+                        $('#btnUpdate').trigger('click');
+
+                        Swal.fire({
+                            title: 'Memuat ulang...',
+                            icon: 'success',
+                            timer: 1000,
+                            timerProgressBar: true,
+                            buttons: false,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        })         
+                    })
+                    $('#btnClose').trigger('click');
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Terdapat kesalahan data, mohon periksa kembali',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            }
+        })
+    }
+
+    const insertToMasterSaldo = () => {
+        $.ajax({
+            type: 'post',
+            url: 'QPOperation',
+            data: JSON.stringify({
+                OPTION: "INSERT_TO_MASTERSALDO",
+                MEMO: $('#memo_no').val()
+            }),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                let result = JSON.parse(res)[0].RESULT
+                if (result === 'true') {
+                    location.reload();
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Terdapat kesalahan data, mohon periksa kembali',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        $('#btnUpload').on('click', function () {
+            Swal.fire({
+                title: 'Ingin mengupload excel tersebut?',
+                text: 'Pastikan file tersebut sudah benar',
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    uploadFile();
+                    Swal.fire({
+                        title: 'Memproses File',
+                        text: 'Silahkan tunggu...',
+                        icon: 'success',
+                        timer: 6000,
+                        timerProgressBar: true,
+                        buttons: false,
+                        showConfirmButton: false
+                    }).then(function () {
+
+                    })
+                     
+                } else if (result.isDenied) {
+                    Swal.fire('Tindakan dibatalkan', '', 'info')
+                }
+            })
+        })
+
+        $('#btnSubmit').on('click', function () {
+            Swal.fire({
+                title: 'Ingin mensubmit data DF tersebut?',
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Memvalidasi data',
+                        text: 'Please wait...',
+                        icon: 'success',
+                        timer: 2500,
+                        timerProgressBar: true,
+                        buttons: false,
+                        showConfirmButton: false
+                    }).then(() => {
+                        checkNewSubdist();
+                    })
+                } else if (result.isDenied) {
+                    Swal.fire('Tindakan dibatalkan', '', 'info')
+                }
+            })
+        })
+
+        $('#btnSave').on('click', function () {
+            insertToSaldoMQP();
+        })
+    })
+</script>

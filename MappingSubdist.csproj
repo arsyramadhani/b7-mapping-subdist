@@ -126,11 +126,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\SimpleController.cs" />
     <Compile Include="DAL\SubdistDAL.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\InsertSubdistModel.cs" />
+    <Compile Include="Models\QPModel.cs" />
     <Compile Include="Models\SimpleQueryModel.cs" />
     <Compile Include="Models\SubdistModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1107,9 +1108,13 @@
     <Content Include="Views\Home\MappingUser.cshtml" />
     <Content Include="Views\Home\MappingEmail.cshtml" />
     <Content Include="Views\Home\ExpenseItem.cshtml" />
+    <Content Include="Views\Home\InsertSubdist.cshtml" />
+    <Content Include="Views\Home\MappingSubdist.cshtml" />
+    <Content Include="Views\Home\InjectQP.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\fileQP\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

@@ -1,0 +1,456 @@
+﻿
+@{
+    ViewBag.Title = "Tambah Subdist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="col-md-12">
+        <h3><b>@ViewBag.Title</b></h3>
+        <hr />
+        <div class="row">
+            <div class="col-md-12" style="display: none" id="showTbl">
+                <h4 style="margin-bottom: 0px; color: red">Beberapa subdist belum terdaftar di dalam sistem</h4>
+                <br />
+                <p style="color: red">Silahkan tambahkan subdist berikut ini:</p>
+                <table id="tblNewSubdist" class="table table-striped table-bordered zero-configuration" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="20%">Kode Subdist</th>
+                            <th width="25%">Nama Subdist</th>
+                            <th width="5%">Pilih</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="col-md-12">
+                <h4>Tambah Subdist Baru</h4>
+                <br />
+                <form id="form_subdist" action="#">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Kode Subdist</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_code" class="form-control" placeholder="Masukkan kode subdist" autocomplete="off">
+                            <p style="color:red; margin-top: 2%; margin-bottom: 1%; display: none" id="errKode">Kode tersebut sudah terdaftar di dalam sistem</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary btn-md " id="btnCheck" type="button" style="background-color:darkcyan;color:white; float: right">Check subdist</button>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Nama Subdist</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_name" class="form-control" placeholder="Masukkan nama subdist" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Pilih Regional</label>
+                        <div class="col-sm-4">
+                            <select id="sel_region" disabled>
+                                <option>Pilih Region</option>
+                                <option value="R1">REGION 1</option>
+                                <option value="R2">REGION 2</option>
+                                <option value="R3">REGION 3</option>
+                                <option value="R4">REGION 4</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Cabang</label>
+                        <div class="col-sm-4">
+                            <select id="sel_Cabang" name="Cabang" disabled>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Group</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_group" class="form-control" placeholder="Masukkan nama group" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Grouping SPB</label>
+                        <div class="col-sm-4">
+                            <label style="font-weight: normal"><input style="vertical-align: middle; position: relative; margin-right: 0.5em" type="checkbox" id="groupingSPB" class="form-control-sm" disabled>Is grouping?</label>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="grouping_spb_true" style="display: none">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-4">
+                            <label style="font-weight: normal"><input style="vertical-align: middle; position: relative; margin-right: 0.5em" type="checkbox" id="groupingSPB_new" class="form-control-sm" >New group</label>
+                            <input style="display: none" type="text" id="subdit_grouping_spb" class="form-control" placeholder="Masukkan nama grup SPB">
+                            <div id="select_spb">
+                                <select id="sel_GroupSPB" name="groupSPB">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">PIC</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_pic" class="form-control" placeholder="Masukkan nama PIC" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">NPWP</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_npwp" class="form-control" placeholder="Masukkan NPWP" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Alamat</label>
+                        <div class="col-sm-4">
+                            <input type="text" id="subdit_address" class="form-control" placeholder="Masukkan alamat subdist" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-primary btn-md " id="btnSubmit" type="button" style="background-color:darkcyan;color:white;">Save</button>
+                            <button class="btn btn-primary btn-md " id="btnReset" style="background-color:dimgrey;color:white;">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr />
+
+
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/sweetalert2.all.min.js"></script>
+<script src="~/Scripts/select2.min.js"></script>
+<script src="~/Scripts/jquery.dataTables.min.js"></script>
+
+<script>
+    $('#sel_region').select2({
+        minimumResultsForSearch: Infinity
+    });
+
+    $('#sel_region').on('select2:select', function (e) {
+        var data = e.params.data.id;
+        getCabangByRegion(data)
+    });
+
+    $('#sel_Cabang').select2({
+        placeholder: 'Pilih cabang...'
+    });
+
+    $('#sel_GroupSPB').select2({
+        placeholder: 'Pilih group SPB...'
+    });
+
+    const param = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+
+    var total;
+
+    let stat = param.status;
+    if (stat === 'true') {
+        document.getElementById('showTbl').style.display = 'inline';
+
+        (function () {
+            var table = $('#tblNewSubdist').DataTable();
+            table.destroy();
+            $.ajax({
+                type: 'post',
+                url: 'subdist',
+                data: JSON.stringify({
+                    OPTION: "CHECK_NEW_SUBDIST"
+                }),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (res) {
+                    $('#tblNewSubdist').DataTable({
+                        "data": JSON.parse(res),
+                        "lengthChange": true,
+                        "searching": true,
+                        "columns": [
+                            { "data": "row_num" },
+                            { "data": "F1" },
+                            { "data": "F2" },
+                            {
+                                "data": null,
+                                "defaultContent": "<button class='btn btn-primary detail' type='button' >Pilih</button>"
+                            }
+                        ]
+                    })
+
+                    total = $('#tblNewSubdist').DataTable().data().count();
+                }
+            });
+        })();
+
+        $('#tblNewSubdist').on('click', 'tbody tr .detail', function () {
+            var rows = $(this).closest('tr');
+            var subdit = $('#tblNewSubdist').DataTable().row(rows).data();
+
+            $('#subdit_name').removeAttr('disabled');
+            $('#sel_region').removeAttr('disabled');
+            $('#sel_Cabang').removeAttr('disabled');
+            $('#subdit_group').removeAttr('disabled');
+            $('#grouping_spb').removeAttr('disabled');
+            $('#subdit_pic').removeAttr('disabled');
+            $('#subdit_npwp').removeAttr('disabled');
+            $('#subdit_address').removeAttr('disabled');
+
+            $('#subdit_code').val(subdit.F1);
+            $('#subdit_name').val(subdit.F2);
+        });
+    }
+
+    const getCabangByRegion = (kodeRegion) => {
+        $.ajax({
+            type: "POST",
+            url: "subdist",
+            data: JSON.stringify({
+                Option: "GET_CABANG",
+                Region: kodeRegion
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                $('#sel_Cabang').empty()
+                result = ''
+                JSON.parse(res).forEach(item => {
+                    result += `<option value="${item.cabang}">${item.namacabang}</option>`
+                })
+                $('#sel_Cabang').append('<option></option>')
+                $('#sel_Cabang').append(result)
+            }
+        });
+    }
+
+    const getDistinctGroupingSPB = () => {
+        $.ajax({
+            type: "post",
+            url: "subdist",
+            data: JSON.stringify({
+                OPTION: "GET_GROUPING_SPB"
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (spb) {
+                $('#sel_GroupSPB').empty();
+                result = ''
+                JSON.parse(spb).forEach(item => {
+                    result += `<option value="${item.GroupingSPB}">${item.GroupingSPB}</option>`
+                });
+                $('#sel_GroupSPB').append('<option></option>');
+                $('#sel_GroupSPB').append(result);
+            }
+        });
+    }
+
+    var kodeExist;
+    const checkKodeSubdist = (kode) => {
+        alert('kode luar ajax: ' + kode);
+        $.ajax({
+            async: false,
+            type: "post",
+            url: "subdist",
+            data: JSON.stringify({
+                OPTION: "CHECK_EXISTING_KODESUBDIST",
+                KODESUBDIST: kode
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                alert('kode dalem ajax: ' + kode);
+                kodeExist = JSON.parse(result)[0].res;
+            }
+        })
+    }
+
+    const validateData = (item) => {
+        let res = true;
+
+        if (item.KODESUBDIST === '') {
+            alert('kode null');
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Silahkan masukkan kode subdist',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            res = false
+            return res
+        }
+
+        if (item.NAMASUBDIST === null) {
+            alert('nama null');
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Silahkan masukkan nama subdist',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            res = false
+            return res
+        }
+
+        if (item.GROUP === null) {
+            alert('grup null');
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Silahkan masukkan grup subdist',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            res = false
+            return res
+        }
+
+        if (item.GROUPSPB === null) {
+            alert('spb null');
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Silahkan masukkan grouping SPB subdist',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            res = false
+            return res
+        }
+
+        return res
+    }
+
+    const insertSubdist = (group) => {
+        let data = {
+            KODESUBDIST: $('#subdit_code').val(),
+            NAMASUBDIST: $('#subdit_name').val(),
+            REGION: $('#sel_region').val(),
+            CABANG: $('#sel_Cabang option:selected').val(),
+            GROUP: $('#subdit_group').val(),
+            PIC: $('#subdit_pic').val(),
+            NPWP: $('#subdit_npwp').val(),
+            ALAMAT: $('#subdit_address').val(),
+            GROUPDESC: $('#subdit_name').val(),
+            GROUPSPB: group
+        }
+
+        if (validateData(data)) {
+            $.ajax({
+                type: "post",
+                url: "insert_subdist",
+                data: JSON.stringify({
+                    OPTION: "INSERT_SUBDIST",
+                    KODESUBDIST: data.KODESUBDIST,
+                    NAMASUBDIST: data.NAMASUBDIST,
+                    REGION: data.REGION,
+                    CABANG: data.CABANG,
+                    GROUP: data.GROUP,
+                    PIC: data.PIC,
+                    NPWP: data.NPWP,
+                    ALAMAT: data.ALAMAT,
+                    GROUPDESC: data.GROUPDESC,
+                    GROUPSPB: data.GROUPSPB
+                }),
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                success: function (res) {
+                    let result = JSON.parse(res)[0].RESULT; alert('db result: ' + result);
+                    if (result === 'true') {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Subdist baru berhasil ditambahkan',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            if (total > '1') window.open('/insertsubdist?status=true', '_self');
+                            else window.open('/insertsubdist', '_self');
+                        })
+                        $('#btnClose').trigger('click');
+                    } else {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: 'Gagal menambahkan subdist',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }
+            })
+        }
+    }
+    
+    $(document).ready(function () {
+        getDistinctGroupingSPB();
+
+        // cek checkbox isgrouping
+        $('#groupingSPB').change(function () {
+            $('#grouping_spb_true').toggle();
+        })
+
+        $('#groupingSPB_new').change(function () {
+            $('#subdit_grouping_spb').toggle();
+            $('#select_spb').toggle();
+        })
+
+        $('#btnCheck').on('click', function () {
+            checkKodeSubdist($('#subdit_code').val());
+
+            //        alert($('#subdit_code').val());
+
+            if (kodeExist === 'exists') {
+                document.getElementById('errKode').style.display = 'inline';
+                $('#subdit_name').prop('disabled', true);
+                $('#sel_region').prop('disabled', true);
+                $('#sel_Cabang').prop('disabled', true);
+                $('#subdit_group').prop('disabled', true);
+                $('#groupingSPB').prop('disabled', true);
+                $('#grouping_spb').prop('disabled', true);
+                $('#subdit_pic').prop('disabled', true);
+                $('#subdit_npwp').prop('disabled', true);
+                $('#subdit_address').prop('disabled', true);
+            } else {
+                document.getElementById('errKode').style.display = 'none';
+                $('#subdit_name').removeAttr('disabled');
+                $('#sel_region').removeAttr('disabled');
+                $('#sel_Cabang').removeAttr('disabled');
+                $('#subdit_group').removeAttr('disabled');
+                $('#groupingSPB').removeAttr('disabled');
+                $('#grouping_spb').removeAttr('disabled');
+                $('#subdit_pic').removeAttr('disabled');
+                $('#subdit_npwp').removeAttr('disabled');
+                $('#subdit_address').removeAttr('disabled');
+            }
+        })
+
+        var wait;
+        // BELOM SELESAI, MASIH BUG
+        
+
+        $('#btnSubmit').on('click', function () {
+            var groupSPB;
+
+            // cek usernya mau bikin grouping spb atau nggak
+            if (!$('#groupingSPB').is(':checked')) {
+                groupSPB = $('#subdit_group').val();
+                insertSubdist(groupSPB);
+            } else {
+
+                // cek usernya apa grouping spb nya mau buat baru atau ngambil dari spb lain
+                if ($('#groupingSPB_new').is(':checked')) {
+                    groupSPB = $('#subdit_grouping_spb').val();
+                    insertSubdist(groupSPB);
+                } else {
+                    groupSPB = $('#sel_GroupSPB').val();
+                    insertSubdist(groupSPB);
+                }
+            }
+        })
+    })
+   
+</script>
