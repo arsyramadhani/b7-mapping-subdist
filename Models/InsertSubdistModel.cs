@@ -18,5 +18,6 @@ namespace MappingSubdist.Models
         public string PIC { get; set; }
         public string NPWP { get; set; }
         public string Alamat { get; set; }
+        public string Month { get; set; }
     }
 }

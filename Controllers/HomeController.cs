@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -20,9 +21,11 @@ namespace MappingSubdist.Controllers
         readonly string conString = ConfigurationManager.ConnectionStrings["RESERVE_DISCOUNT"].ConnectionString;
         readonly SubdistDAL DAL = new SubdistDAL();
 
+
         readonly string SP_MAPPING_SUBDIST = "[DBO].[SP_MAPPING_SUBDIST]";
         readonly string SP_INJECT_QP = "[DBO].[SP_INJECT_QP]";
         readonly string SubdistConn = "RESERVE_DISCOUNT";
+        readonly string STP_ClosingDF = "[DBO].[STP_ClosingDF]";
 
         #region View
 
@@ -107,6 +110,12 @@ namespace MappingSubdist.Controllers
 
         [Route("InjectQP")]
         public ActionResult InjectQP()
+        {
+            return View();
+        }
+
+        [Route("ClosingDF")]
+        public ActionResult ClosingDF()
         {
             return View();
         }
@@ -267,6 +276,32 @@ namespace MappingSubdist.Controllers
             var status = injectQP(excelPath, fileName);
 
             return status;
-        } 
+        }
+
+        [Route("ClosingDFConfirm")]
+        public ActionResult ClosingDFConfirm(InsertSubdistModel model)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "Option", model.Option }
+            };
+
+            var param = new DynamicParameters(dict);
+            return Json(DAL.StoredProcedure(param, STP_ClosingDF, SubdistConn));
+        }
+
+        [Route("CheckFlagClosing")]
+        public ActionResult CheckFlagClosing(InsertSubdistModel model)
+        {
+         
+            var dict = new Dictionary<string, object>
+            {
+                {"Option", model.Option },
+                {"MonthGet", model.Month}
+            };
+
+            var param = new DynamicParameters(dict);
+            return Json(DAL.StoredProcedure(param, STP_ClosingDF, SubdistConn));
+        }
     }
 }

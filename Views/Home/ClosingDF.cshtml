@@ -1,0 +1,166 @@
+﻿
+@{
+    ViewBag.Title = "ClosingDF";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="col-md-12">
+        <h3><b>Closing DF</b></h3>
+        <hr />
+    </div>
+    <div class="col-md-12">
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label"style="font-weight: bold; color: black; font-size: 20px">Tanggal:  <label id="txtDate" style="font-weight: bold; color: black; font-size: 20px">8 (Agustus)</label></label>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label" style="font-weight: bold; color: black; font-size: 20px">Closing untuk Bulan  <label id="txtBulan" style="font-weight: bold; color: red; font-size: 20px">8 (Agustus)</label></label>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <hr/>
+        <div class="form-group row">
+            <label class="col-sm-12 col-form-label" style=""><label style="font-weight: bold; color: black; font-size: 20px">Note: Closing hanya bisa dilakukan setiap <b style="color: red; font-weight: bold; ">Tanggal 1.</b><br> Jika sudah dilakukan proses Closing, maka  <b style="color: red; font-weight: bold; ">Data tidak bisa di Rollback!</b></label></label>
+        </div>
+        <div class="form-group row" id="divHidden" hidden>
+            <label class="col-sm-12 col-form-label" style="font-weight: bold; color: red; font-size: 15px">Closing sudah dilakukan untuk Bulan ini.</label>
+        </div>
+        <button class="btn btn-primary btn-md " id="btnClosing" type="button" style="background-color: darkcyan; color: white;">Closing</button>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/sweetalert2.all.min.js"></script>
+<script src="~/Scripts/select2.min.js"></script>
+<script src="~/Scripts/jquery.dataTables.min.js"></script>
+
+<script>
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); 
+    var yyyy = today.getFullYear();
+
+    var mmPrev = String(today.getMonth()-1).padStart(2, '0'); 
+    var mmPrevTxt = String(today.getMonth()).padStart(2, '0'); 
+    var monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+
+    var prevDate = new Date(yyyy, mmPrev, dd);
+
+    today = dd + '/' + mm + '/' + yyyy;
+    //alert(today)
+
+    $(document).ready(function () {
+       
+        var flagClosing = '';
+        checkFlagClosing();
+
+        if (flagClosing == 'false') {
+            $('#divHidden').attr('hidden', true);
+        } else {
+            $('#divHidden').attr('hidden', false);
+            $('#btnClosing').attr('disabled', true);
+        }
+
+        //alert(month)
+        $('#txtDate').text(today);
+        $('#txtBulan').text(mmPrevTxt + ' (' + monthNames[prevDate.getMonth()] + ')');
+        @* if (dd != 01) {
+            $('#btnClosing').attr('disabled', true);
+        }*@
+        $('#btnClosing').click(function () {
+          
+            //alert(flagClosing)
+            if (flagClosing == 'false') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: 'Konfirmasi Closing DF?',
+                    html: 'Bulan yang akan di Closing adalah: <b style="font-weight:bold"> ' + monthNames[prevDate.getMonth()] + ' ' + yyyy + '</b>',
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonColor: "#45b05b",
+                    confirmButtonText: "Confirm",
+                    cancelButtonColor: "#f1556c"
+                }).then(function(result) {
+                    if (result.value) {
+                        Swal.fire({
+                            title: 'Processing...',
+                            allowEscapeKey: false,
+                            allowOutsideClick: false,
+                            showLoaderOnConfirm: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                            timer: 2000,
+                            timerProgressBar: true,
+                        }).then(() => {
+                           // alert('closingdf')
+                             closingDF();
+                        })
+                    };
+                });
+            } else {
+                Swal.fire({
+                    title: 'Closing Sudah di lakukan untuk bulan ini!',
+                    icon: 'error',
+                    timer: 1500,
+                    buttons: false,
+                    showConfirmButton: false
+                })
+            }
+        });
+
+        function closingDF() {
+            $.ajax({
+                url: "ClosingDFConfirm",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({
+                    Option: "Closing DF",
+                    Month: mm
+                 }),
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    Swal.close();
+                    Swal.fire({
+                        title: 'Closing Success!',
+                        icon: 'success',
+                        timer: 1500,
+                        buttons: false,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    })
+                }, error: function (ex) {
+                    console.log(JSON.stringify(ex))
+                }
+            });
+        }
+
+        function checkFlagClosing() {
+            $.ajax({
+                url: "CheckFlagClosing",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({
+                    Option: "Check Flag DF",
+                    Month: mm
+                }),
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    var result = JSON.parse(data);
+                    flagClosing = result[0].Flag;
+
+                }, error: function (ex) {
+                    console.log(JSON.stringify(ex))
+                }
+            });
+        }
+    });
+
+</script>
+
