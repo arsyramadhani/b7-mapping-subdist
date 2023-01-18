@@ -21,6 +21,7 @@ namespace MappingSubdist.Controllers
         readonly SubdistDAL DAL = new SubdistDAL();
 
         readonly string SP_MAPPING_SUBDIST = "[DBO].[SP_MAPPING_SUBDIST]";
+        readonly string SP_INSERT_SUBDIST = "[DBO].[SP_INSERT_SUBDIST]";
         readonly string SP_INJECT_QP = "[DBO].[SP_INJECT_QP]";
         readonly string SubdistConn = "RESERVE_DISCOUNT";
 
@@ -165,7 +166,7 @@ namespace MappingSubdist.Controllers
             {
                  { "OPTION", subdistModel.Option },
                  { "CABANG", subdistModel.KodeCabang },
-                 { "REGIONAL", subdistModel.Region },
+                 { "REGION", subdistModel.Region },
                  { "KODESUBDIST", subdistModel.KodeSubdist },
                  { "NAMASUBDIST", subdistModel.NamaSubdist },
                  { "GROUPSPB", subdistModel.GroupSPB },
@@ -185,7 +186,7 @@ namespace MappingSubdist.Controllers
                 { "OPTION", model.Option },
                 { "KODESUBDIST", model.KodeSubdist },
                 { "NAMASUBDIST", model.NamaSubdist },
-                { "REGIONAL", model.Region },
+                { "REGION", model.Region },
                 { "CABANG", model.Cabang },
                 { "GROUP", model.Group },
                 { "PIC", model.PIC },
@@ -196,7 +197,7 @@ namespace MappingSubdist.Controllers
             };
 
             var param = new DynamicParameters(dict);
-            return Json(DAL.StoredProcedure(param, SP_MAPPING_SUBDIST, SubdistConn));
+            return Json(DAL.StoredProcedure(param, SP_INSERT_SUBDIST, SubdistConn));
         }
 
         [Route("QPOperation")]

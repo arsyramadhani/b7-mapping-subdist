@@ -119,8 +119,10 @@
     });
 
     $('#sel_region').on('select2:select', function (e) {
+        $('#sel_Subdist').empty();
+        $('#sel_GroupSPB').empty();
         var data = e.params.data.id;
-        getCabangByRegion(data)
+        getCabangByRegion(data);
     });
 
     $('#sel_Cabang').select2({
@@ -128,6 +130,7 @@
     });
 
     $('#sel_Cabang').on('select2:select', function (e) {
+        $('#sel_GroupSPB').empty();
         var data = e.params.data.id;
         getSubdistByCabang(data);
     })
@@ -176,6 +179,7 @@
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function (res) {
+                console.log(res);
                 $('#sel_Cabang').empty()
                 result = ''
                 JSON.parse(res).forEach(item => {
@@ -201,7 +205,7 @@
                 $('#sel_Subdist').empty();
                 result = ''
                 JSON.parse(subdist).forEach(item => {
-                    result += `<option value="${item.KodeSubDist}">${item.SubdistDisplay}</option>`
+                    result += `<option value="${item.KodeSubdist}">${item.SubdistDisplay}</option>`
                 });
                 $('#sel_Subdist').append('<option></option>');
                 $('#sel_Subdist').append(result);
@@ -214,11 +218,12 @@
             type: "post",
             url: "subdist",
             data: JSON.stringify({
-                OPTION: "GET_ALL_GROUPING_SPB"
+                OPTION: "GET_GROUPING_SPB"
             }),
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function (spb) {
+                console.log(spb);
                 $('#sel_GroupSPB_update').empty();
                 result = ''
                 JSON.parse(spb).forEach(item => {
@@ -241,6 +246,8 @@
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function (spb) {
+                console.log(spb);
+
                 $('#sel_GroupSPB').empty();
                 result = ''
                 JSON.parse(spb).forEach(item => {

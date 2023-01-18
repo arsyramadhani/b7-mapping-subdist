@@ -16,9 +16,13 @@
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">Kode Subdist</label>
                         <div class="col-sm-4">
-                            <input type="text" id="subdit_code" class="form-control" placeholder="Masukkan kode subdist" autocomplete="off">
-                            <button class="btn btn-primary btn-md " id="btnCheck" type="button" style="background-color:darkcyan;color:white;">Check subdist</button>
-                            <p style="color:red; margin-top: 2%; margin-bottom: 1%; display: none" id="errKode">Kode tersebut sudah terdaftar di dalam sistem</p>
+                            <input type="number" id="subdit_code" class="form-control" placeholder="Masukkan kode subdist" autocomplete="off">
+                            <div style="margin-top: 1em; display: flex; align-items: center;">
+                                <button class="btn btn-primary btn-md " id="btnCheck" type="button" style="background-color:darkcyan;color:white; flex-grow: 0; flex-shrink: 0">Check subdist</button>
+                                <p style="color:red; margin-left: 1em; margin-bottom: 0; display: none" id="errKode">Kode tersebut sudah terdaftar di sistem</p>
+                                <p style="color:red; margin-left: 1em; margin-bottom: 0; display: none" id="emptyKode">Mohon masukkan kode subdist</p>
+                                <p style="color:green; margin-left: 1em; margin-bottom: 0; display: none" id="succKode">Kode subdist tersedia</p>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -128,18 +132,19 @@
     const getCabangByRegion = (kodeRegion) => {
         $.ajax({
             type: "POST",
-            url: "subdist",
+            url: "insert_subdist",
             data: JSON.stringify({
-                Option: "GET_CABANG",
+                Option: "GET_CABANG_BY_REGION",
                 Region: kodeRegion
             }),
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function (res) {
+                console.log(JSON.parse(res));
                 $('#sel_Cabang').empty()
                 result = ''
                 JSON.parse(res).forEach(item => {
-                    result += `<option value="${item.cabang}">${item.namacabang}</option>`
+                    result += `<option value="${item.Cabang}">${item.NamaCabang}</option>`
                 })
                 $('#sel_Cabang').append('<option></option>')
                 $('#sel_Cabang').append(result)
@@ -150,7 +155,7 @@
     const getDistinctGroupingSPB = () => {
         $.ajax({
             type: "post",
-            url: "subdist",
+            url: "insert_subdist",
             data: JSON.stringify({
                 OPTION: "GET_GROUPING_SPB"
             }),
@@ -170,10 +175,10 @@
 
     var kodeExist;
     const checkKodeSubdist = (kode) => {
-        alert('kode luar ajax: ' + kode);
         $.ajax({
             type: "post",
-            url: "subdist",
+            async: false,
+            url: "insert_subdist",
             data: JSON.stringify({
                 OPTION: "CHECK_EXISTING_KODESUBDIST",
                 KODESUBDIST: kode
@@ -181,8 +186,7 @@
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function (result) {
-                alert('kode dalem ajax: ' + kode);
-                kodeExist = JSON.parse(result)[0].res;
+                kodeExist = JSON.parse(result).length === 0 ? 'avail' : 'exists';
             }
         })
     }
@@ -279,7 +283,7 @@
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 success: function (res) {
-                    let result = JSON.parse(res)[0].RESULT; alert('db result: ' + result);
+                    let result = JSON.parse(res)[0].RES;
                     if (result === 'true') {
                         Swal.fire({
                             position: 'center',
@@ -287,8 +291,7 @@
                             title: 'Subdist baru berhasil ditambahkan',
                             showConfirmButton: false,
                             timer: 1500
-                        })
-                        $('#btnClose').trigger('click');
+                        }).then(() => location.reload());
                     } else {
                         Swal.fire({
                             position: 'center',
@@ -318,35 +321,42 @@
 
         $('#btnCheck').on('click', function () {
             checkKodeSubdist($('#subdit_code').val());
-
-            //        alert($('#subdit_code').val());
-
-            if (kodeExist === 'exists') {
-                document.getElementById('errKode').style.display = 'inline';
-                $('#subdit_name').prop('disabled', true);
-                $('#sel_region').prop('disabled', true);
-                $('#sel_Cabang').prop('disabled', true);
-                $('#subdit_group').prop('disabled', true);
-                $('#grouping_spb').prop('disabled', true);
-                $('#subdit_pic').prop('disabled', true);
-                $('#subdit_npwp').prop('disabled', true);
-                $('#subdit_address').prop('disabled', true);
-            } else {
-                document.getElementById('errKode').style.display = 'none';
-                $('#subdit_name').removeAttr('disabled');
-                $('#sel_region').removeAttr('disabled');
-                $('#sel_Cabang').removeAttr('disabled');
-                $('#subdit_group').removeAttr('disabled');
-                $('#grouping_spb').removeAttr('disabled');
-                $('#subdit_pic').removeAttr('disabled');
-                $('#subdit_npwp').removeAttr('disabled');
-                $('#subdit_address').removeAttr('disabled');
+            document.getElementById('succKode').style.display = 'none';
+            document.getElementById('errKode').style.display = 'none';
+            
+            if ($('#subdit_code').val() === '') document.getElementById('emptyKode').style.display = 'inline';
+            else {
+                document.getElementById('emptyKode').style.display = 'none';
+                if (kodeExist === 'exists') {
+                    document.getElementById('errKode').style.display = 'inline';
+                    document.getElementById('succKode').style.display = 'none';
+                    $('#subdit_name').prop('disabled', true);
+                    $('#sel_region').prop('disabled', true);
+                    $('#sel_Cabang').prop('disabled', true);
+                    $('#subdit_group').prop('disabled', true);
+                    $('#groupingSPB').removeAttr('disabled');
+                    $('#grouping_spb').prop('disabled', true);
+                    $('#subdit_pic').prop('disabled', true);
+                    $('#subdit_npwp').prop('disabled', true);
+                    $('#subdit_address').prop('disabled', true);
+                } else {
+                    document.getElementById('errKode').style.display = 'none';
+                    document.getElementById('succKode').style.display = 'inline';
+                    $('#subdit_name').removeAttr('disabled');
+                    $('#sel_region').removeAttr('disabled');
+                    $('#sel_Cabang').removeAttr('disabled');
+                    $('#subdit_group').removeAttr('disabled');
+                    $('#groupingSPB').removeAttr('disabled');
+                    $('#grouping_spb').removeAttr('disabled');
+                    $('#subdit_pic').removeAttr('disabled');
+                    $('#subdit_npwp').removeAttr('disabled');
+                    $('#subdit_address').removeAttr('disabled');
+                }
             }
+            
         })
 
         var wait;
-        // BELOM SELESAI, MASIH BUG
-        
 
         $('#btnSubmit').on('click', function () {
             var groupSPB;
