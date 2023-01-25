@@ -18,9 +18,10 @@
         </div>
         <div class="form-group row">
             <div class="col-sm-2"></div>
-            <div class="col-sm-4">
+            <div class="col-sm-2">
                 <button class="btn btn-primary btn-md " id="btnUpload" type="button" style="background-color:darkcyan;color:white;">Upload</button>
             </div>
+            <label class="col-sm-6 col-form-label" style="color: red; font-weight: bold; margin-bottom: 0; display: none" id="errKode">Mohon pilih file QP terlebih dahulu!</label>
         </div>
     </div>
     <hr />
@@ -98,7 +99,20 @@
             async: false,
             data: formData,
             success: function (file) {
-                console.log(file);
+                Swal.fire({
+                    title: 'Upload Success',
+                    text: 'Please wait...',
+                    icon: 'success',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    buttons: false,
+                    showConfirmButton: false
+                }).then(() => {
+                    loadTempQP();
+                    document.getElementById("warning").style.display = "inline";
+                    getTotalSum();
+                    document.getElementById("btnSubmit").style.display = "inline";
+                })
             },
             processData: false,
             contentType: false,
@@ -413,22 +427,11 @@
         });
 
         $('#btnUpload').on('click', function () {
-            /*uploadFile();*/
-
-            Swal.fire({
-                title: 'Upload Success',
-                text: 'Please wait...',
-                icon: 'success',
-                timer: 5000,
-                timerProgressBar: true,
-                buttons: false,
-                showConfirmButton: false
-            }).then(() => {
-                loadTempQP();
-                document.getElementById("warning").style.display = "inline";
-                getTotalSum();
-                document.getElementById("btnSubmit").style.display = "inline";
-            })
+            if (document.getElementById("fileUpload").files.length === 0) document.getElementById('errKode').style.display = 'inline';
+            else {
+                document.getElementById('errKode').style.display = 'none';
+                uploadFile();
+            }
         })
 
         $('#btnSubmit').on('click', function () {
