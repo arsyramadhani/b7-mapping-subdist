@@ -138,6 +138,7 @@
 
     $('#sel_Subdist').on('select2:select', function (e) {
         var data = e.params.data.id;
+        console.log(e.params);
         getDistinctGroupingSPBBySubdist(data);
     })
 
@@ -201,7 +202,7 @@
                 $('#sel_Subdist').empty();
                 result = ''
                 JSON.parse(subdist).forEach(item => {
-                    result += `<option value="${item.KodeSubDist}">${item.SubdistDisplay}</option>`
+                    result += `<option value="${item.KodeSubdist}">${item.SubdistDisplay}</option>`
                 });
                 $('#sel_Subdist').append('<option></option>');
                 $('#sel_Subdist').append(result);
@@ -241,6 +242,7 @@
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function (spb) {
+                console.log(spb)
                 $('#sel_GroupSPB').empty();
                 result = ''
                 JSON.parse(spb).forEach(item => {

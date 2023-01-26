@@ -21,6 +21,7 @@ namespace MappingSubdist.Controllers
         readonly SubdistDAL DAL = new SubdistDAL();
 
         readonly string SP_MAPPING_SUBDIST = "[DBO].[SP_MAPPING_SUBDIST]";
+        readonly string SP_INSERT_SUBDIST = "[DBO].[SP_INSERT_SUBDIST]";
         readonly string SP_INJECT_QP = "[DBO].[SP_INJECT_QP]";
         readonly string SubdistConn = "RESERVE_DISCOUNT";
 
@@ -110,6 +111,12 @@ namespace MappingSubdist.Controllers
         {
             return View();
         }
+
+        [Route("SubdistJoin")]
+        public ActionResult SubdistJoin()
+        {
+            return View();
+        }
         #endregion
 
         #region RedirectView
@@ -155,6 +162,12 @@ namespace MappingSubdist.Controllers
         {
             return RedirectToAction("InjectQP");
         }
+
+        [Route("home/SubdistJoin")]
+        public ActionResult RedirectSubdistJoin()
+        {
+            return RedirectToAction("SubdistJoin");
+        }
         #endregion
 
 
@@ -165,18 +178,19 @@ namespace MappingSubdist.Controllers
             {
                  { "OPTION", subdistModel.Option },
                  { "CABANG", subdistModel.KodeCabang },
-                 { "REGIONAL", subdistModel.Region },
+                 { "REGION", subdistModel.Region },
                  { "KODESUBDIST", subdistModel.KodeSubdist },
                  { "NAMASUBDIST", subdistModel.NamaSubdist },
+                 { "INDUKKODESUBDIST", subdistModel.IndukKodeSubdist },
                  { "GROUPSPB", subdistModel.GroupSPB },
                  { "USERNAME", subdistModel.Username },
                  { "EMAIL", subdistModel.Email },
                  { "PASSWORD", subdistModel.Password }
             };
             var parameters = new DynamicParameters(dictionary);
-            return Json(DAL.StoredProcedure(parameters, SP_MAPPING_SUBDIST, SubdistConn)); 
+            return Json(DAL.StoredProcedure(parameters, SP_MAPPING_SUBDIST, SubdistConn));
         }
-         
+
         [Route("insert_subdist")]
         public ActionResult InsertSubdist(InsertSubdistModel model)
         {
@@ -185,7 +199,7 @@ namespace MappingSubdist.Controllers
                 { "OPTION", model.Option },
                 { "KODESUBDIST", model.KodeSubdist },
                 { "NAMASUBDIST", model.NamaSubdist },
-                { "REGIONAL", model.Region },
+                { "REGION", model.Region },
                 { "CABANG", model.Cabang },
                 { "GROUP", model.Group },
                 { "PIC", model.PIC },
@@ -196,7 +210,7 @@ namespace MappingSubdist.Controllers
             };
 
             var param = new DynamicParameters(dict);
-            return Json(DAL.StoredProcedure(param, SP_MAPPING_SUBDIST, SubdistConn));
+            return Json(DAL.StoredProcedure(param, SP_INSERT_SUBDIST, SubdistConn));
         }
 
         [Route("QPOperation")]
@@ -215,38 +229,44 @@ namespace MappingSubdist.Controllers
 
         public bool injectQP(string path, string name)
         {
-            string excelConnString = String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0\"", path);
-
-            using (SqlConnection con = new SqlConnection(conString))
-            {
-                con.Open();
-                // Delete old entries
-                SqlCommand truncate = new SqlCommand("TRUNCATE TABLE temp_InjectQP", con);
-                truncate.ExecuteNonQuery();
-                con.Close();
-            }
-
             try
             {
-                using (OleDbConnection excelConnection = new OleDbConnection(excelConnString))
+                string excelConnString = String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0\"", path);
+
+                using (SqlConnection con = new SqlConnection(conString))
                 {
-                    using (OleDbCommand cmd = new OleDbCommand("Select [SITE_USE_ID],[NAMALANG],[SALES HNA],[QP] from [RECAP$] WHERE [SITE_USE_ID] IS NOT NULL", excelConnection))
+                    con.Open();
+                    // Delete old entries
+                    SqlCommand truncate = new SqlCommand("TRUNCATE TABLE temp_InjectQP", con);
+                    truncate.ExecuteNonQuery();
+                    con.Close();
+                }
+
+                try
+                {
+                    using (OleDbConnection excelConnection = new OleDbConnection(excelConnString))
                     {
-                        excelConnection.Open();
-                        using (OleDbDataReader dReader = cmd.ExecuteReader())
+                        using (OleDbCommand cmd = new OleDbCommand("Select [SITE_USE_ID],[NAMALANG],[SALES HNA],[QP] from [RECAP$] WHERE [SITE_USE_ID] IS NOT NULL", excelConnection))
                         {
-                            using (SqlBulkCopy sqlBulk = new SqlBulkCopy(conString))
+                            excelConnection.Open();
+                            using (OleDbDataReader dReader = cmd.ExecuteReader())
                             {
-                                //Give your Destination table name 
-                                sqlBulk.DestinationTableName = "temp_InjectQP";
-                                sqlBulk.WriteToServer(dReader);
+                                using (SqlBulkCopy sqlBulk = new SqlBulkCopy(conString))
+                                {
+                                    //Give your Destination table name 
+                                    sqlBulk.DestinationTableName = "temp_InjectQP";
+                                    sqlBulk.WriteToServer(dReader);
+                                }
                             }
                         }
                     }
+                } catch (Exception e)
+                {
+                    throw e;
                 }
             } catch (Exception e)
             {
-                return false;
+                throw e;
             }
             return true;
         }
@@ -264,9 +284,9 @@ namespace MappingSubdist.Controllers
             var excelPath = Path.Combine(Server.MapPath(folder), fileName);
             file.SaveAs(excelPath);
 
-            var status = injectQP(excelPath, fileName);
+            //var status = injectQP(excelPath, fileName);
 
-            return status;
+            return true;
         } 
     }
 }
