@@ -284,9 +284,9 @@ namespace MappingSubdist.Controllers
             var excelPath = Path.Combine(Server.MapPath(folder), fileName);
             file.SaveAs(excelPath);
 
-            //var status = injectQP(excelPath, fileName);
+            var status = injectQP(excelPath, fileName);
 
-            return true;
+            return status;
         } 
     }
 }
